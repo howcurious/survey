@@ -10,7 +10,7 @@
 
 开发配置（dev，默认配置）下，项目使用 [H2 数据库](https://h2database.com/html/main.html)。
 
-生产配置（prod）下，项目使用 [MySQL 数据库](https://www.mysql.com)。
+生产配置（prod）下，项目使用 [MySQL 数据库](https://www.mysql.com)，依赖于服务 [howcurious/accesstoken](https://github.com/howcurious/accesstoken) 管理微信小程序的 accesstoken。
 
 建表脚本请见 [schema.sql](src/main/resources/schema.sql)，铺底数据请见 [data.sql](src/main/resources/data.sql)。
 
@@ -34,13 +34,16 @@ mvn clean package -Dmaven.test.skip=true -P prod
 
 在构建 jar 包前，需在目录 src/main/resources 下创建 application-prod.yml。
 
+## 相关仓库
+- [howcurious/accesstoken](https://github.com/howcurious/accesstoken) — 用于管理微信小程序的 accesstoken。
+
 ## 维护者
 
 [@howcurious](https://github.com/howcurious)。
 
 ## 如何贡献
 
-\[手动期待脸\]~ [提一个 Issue](https://github.com/howcurious/survey/issues/new) 或者提交一个 Pull Request。
+🍉 [提一个 Issue](https://github.com/howcurious/survey/issues/new) 或者提交一个 Pull Request。
 
 ## 使用许可
 
