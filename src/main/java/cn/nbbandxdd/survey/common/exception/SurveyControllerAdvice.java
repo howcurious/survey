@@ -9,10 +9,30 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import cn.nbbandxdd.survey.common.ICommonConstDefine;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * <p>异常统一处理。存在少量异常不进行统一处理，如：Jwt相关异常等。
+ * 
+ * <ul>
+ * <li>请求报文参数校验异常处理，使用{@link #methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException)}。</li>
+ * <li>内部逻辑校验异常处理，使用{@link #surveyValidationExceptionHandler(SurveyValidationException)}。</li>
+ * <li>微信小程序内容安全校验异常处理，使用{@link #surveyMsgSecCheckExceptionHandler(SurveyMsgSecCheckException)}。</li>
+ * <li>原因不明异常处理，使用{@link #exceptionHandler(Exception)}。</li>
+ * </ul>
+ * 
+ * @author howcurious
+ */
 @Slf4j
 @ControllerAdvice
 public class SurveyControllerAdvice {
 
+	/**
+	 * <p>请求报文参数校验异常处理。
+	 * 当存在field error时，返回field error错误信息；否则，当存在global error时，返回global error错误信息；否则返回默认错误信息。
+	 * 
+	 * @param e {@code MethodArgumentNotValidException}
+	 * @return {@code ResponseEntity<ExceptionEntity>}
+	 * @see MethodArgumentNotValidException
+	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ExceptionEntity> methodArgumentNotValidExceptionHandler(
 		MethodArgumentNotValidException e) {
@@ -33,6 +53,13 @@ public class SurveyControllerAdvice {
 		return new ResponseEntity<>(entity, HttpStatus.BAD_REQUEST);
 	}
 	
+	/**
+	 * <p>内部逻辑校验异常处理。
+	 * 
+	 * @param e {@code SurveyValidationException}
+	 * @return {@code ResponseEntity<ExceptionEntity>}
+	 * @see SurveyValidationException
+	 */
 	@ExceptionHandler(SurveyValidationException.class)
 	public ResponseEntity<ExceptionEntity> surveyValidationExceptionHandler(
 		SurveyValidationException e) {
@@ -44,6 +71,13 @@ public class SurveyControllerAdvice {
 		return new ResponseEntity<>(entity, HttpStatus.BAD_REQUEST);
 	}
 	
+	/**
+	 * <p>微信小程序内容安全校验异常处理。
+	 * 
+	 * @param e {@code SurveyMsgSecCheckException}
+	 * @return {@code ResponseEntity<ExceptionEntity>}
+	 * @see SurveyMsgSecCheckException
+	 */
 	@ExceptionHandler(SurveyMsgSecCheckException.class)
 	public ResponseEntity<ExceptionEntity> surveyMsgSecCheckExceptionHandler(
 		SurveyMsgSecCheckException e) {
@@ -55,6 +89,12 @@ public class SurveyControllerAdvice {
 		return new ResponseEntity<>(entity, HttpStatus.BAD_REQUEST);
 	}
 	
+	/**
+	 * <p>原因不明异常处理。为排查原因不明的异常，在服务器端打印错误日志。
+	 * 
+	 * @param e {@code Exception}
+	 * @return {@code ResponseEntity<ExceptionEntity>}
+	 */
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ExceptionEntity> exceptionHandler(Exception e) {
 		

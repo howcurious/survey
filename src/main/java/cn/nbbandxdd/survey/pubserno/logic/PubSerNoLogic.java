@@ -8,12 +8,31 @@ import org.springframework.transaction.annotation.Transactional;
 import cn.nbbandxdd.survey.pubserno.dao.PubSerNoDAO;
 import cn.nbbandxdd.survey.pubserno.dao.entity.PubSerNoEntity;
 
+/**
+ * <p>公共序列号Logic。
+ * 
+ * <ul>
+ * <li>获取公共序列号，<strong>内部使用接口</strong>，使用{@link #getPubSerNo(String)}。</li>
+ * </ul>
+ * 
+ * @author howcurious
+ */
 @Component
 public class PubSerNoLogic {
 
 	@Autowired
 	private PubSerNoDAO pubSerNoDAO;
 	
+	/**
+	 * <p> 获取公共序列号。序列号可以循环使用。
+	 * 
+	 * @param typ 序列号类型。
+	 * 问卷序列号：{@link #cn.nbbandxdd.survey.common.ICommonConstDefine.PUB_SER_NO_EXAM_EXAM_CD}，
+	 * 题目序列号：{@link #cn.nbbandxdd.survey.common.ICommonConstDefine.PUB_SER_NO_QUES_QUES_CD}。
+	 * @return String 序列号
+	 * @throws RuntimeException 序号类型不存在时抛出异常
+	 * @see cn.nbbandxdd.survey.common.ICommonConstDefine
+	 */
 	@Transactional
 	public String getPubSerNo(String typ) {
 		

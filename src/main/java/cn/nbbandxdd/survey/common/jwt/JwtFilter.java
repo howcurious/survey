@@ -16,8 +16,18 @@ import cn.nbbandxdd.survey.common.ICommonConstDefine;
 import cn.nbbandxdd.survey.common.exception.ExceptionEntity;
 import io.jsonwebtoken.JwtException;
 
+/**
+ * <p>Jwt过滤器。校验请求中是否包含形如“authorization: Bearer myToken”的报文头，并校验“myToken”。
+ * 
+ * @author howcurious
+ */
 public class JwtFilter extends OncePerRequestFilter {
 	
+	/**
+	 * <p>校验Jwt。
+	 * 如果报文头authorization缺失或格式错误，则抛出{@code RuntimeException}；
+	 * 如果Jwt校验失败，则抛出{@code JwtException}。
+	 */
 	@Override
 	public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 		
