@@ -104,7 +104,7 @@ public interface QuesDAO {
 	@Select(
 		"SELECT QUES_CD, TYP_CD, DSC, COMM, LAST_MANT_USR, LAST_MANT_DAT, LAST_MANT_TMSTP " +
 		"FROM QUES " +
-		"WHERE QUES_CD = #{quesCd} AND LAST_MANT_USR IN ('everyone', #{lastMantUsr})"
+		"WHERE QUES_CD = #{quesCd} AND LAST_MANT_USR IN (SELECT ROLE_ID FROM ROLE_INFO WHERE OPEN_ID = #{lastMantUsr})"
 	)
 	@Results(id = "QuesByPron", value = {
 		@Result(property = "quesCd", column = "QUES_CD", javaType = String.class),

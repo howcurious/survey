@@ -40,7 +40,9 @@ public interface UsrInfoDAO {
 	@Insert(
 		"INSERT INTO " +
 		"USR_INFO (OPEN_ID, DPRT_NAM, GRP_NAM, USR_NAM, REG_TMSTP) " +
-		"VALUES (#{openId}, #{dprtNam}, #{grpNam}, #{usrNam}, #{regTmstp, jdbcType = TIMESTAMP})"
+		"VALUES (#{openId}, #{dprtNam}, #{grpNam}, #{usrNam}, #{regTmstp, jdbcType = TIMESTAMP});" +
+		
+		"INSERT INTO ROLE_INFO (OPEN_ID, ROLE_ID) VALUES (#{openId}, #{openId}), (#{openId}, 'everyone');"
 	)
     int insert(UsrInfoEntity entity);
 	

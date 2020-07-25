@@ -45,7 +45,7 @@ public interface ExamDAO {
 				"#{lastMantUsr} AS LAST_MANT_USR, #{lastMantDat} AS LAST_MANT_DAT, #{lastMantTmstp} AS LAST_MANT_TMSTP " +
 			"FROM (" +
 			"<foreach collection = 'quesTypRlnList' open = '' item = 'item' separator = ' UNION ALL ' close = ''>" +
-				"(SELECT * FROM QUES WHERE LAST_MANT_USR IN ('everyone', #{lastMantUsr}) AND TYP_CD = #{item.quesTypCd} ORDER BY RAND() LIMIT #{item.cnt})" +
+				"(SELECT * FROM QUES WHERE LAST_MANT_USR IN (SELECT ROLE_ID FROM ROLE_INFO WHERE OPEN_ID = #{lastMantUsr}) AND TYP_CD = #{item.quesTypCd} ORDER BY RAND() LIMIT #{item.cnt})" +
 			"</foreach>" + ") Q, " +
 			"(SELECT @rank := -1) R" +
 			";" +
@@ -144,7 +144,7 @@ public interface ExamDAO {
 		"FROM QUES " +
 		"RIGHT JOIN (SELECT * FROM EXAM_QUES_RLN WHERE EXAM_CD = #{examCd}) RLN " +
 			"ON QUES.QUES_CD = RLN.QUES_CD " +
-		"WHERE QUES.LAST_MANT_USR IN ('everyone', #{lastMantUsr}) " +
+		"WHERE QUES.LAST_MANT_USR IN (SELECT ROLE_ID FROM ROLE_INFO WHERE OPEN_ID = #{lastMantUsr}) " +
 		"ORDER BY RLN.SEQ_NO"
 	)
 	@Results(id = "QuesList", value = {
@@ -243,7 +243,7 @@ public interface ExamDAO {
 	@Select(
 		"SELECT QUES_CD, TYP_CD, DSC, LAST_MANT_USR, LAST_MANT_DAT, LAST_MANT_TMSTP " +
 		"FROM QUES " +
-		"WHERE LAST_MANT_USR IN ('everyone', #{lastMantUsr}) " +
+		"WHERE LAST_MANT_USR IN (SELECT ROLE_ID FROM ROLE_INFO WHERE OPEN_ID = #{lastMantUsr}) " +
 		"AND NOT EXISTS (" +
 			"SELECT 1 FROM EXAM_QUES_RLN RLN " +
 			"WHERE RLN.EXAM_CD = #{examCd} AND QUES.QUES_CD = RLN.QUES_CD" +
