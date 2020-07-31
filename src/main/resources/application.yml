@@ -1,4 +1,4 @@
-server:  port: 8080  servlet:    context-path: /questionnaire    encoding:      enabled: true      charset: UTF-8      force: true  shutdown: gracefulmanagement:  health:    probes:      enabled: truespring:  profiles:    active: '@profileActive@'  lifecycle:    timeout-per-shutdown-phase: 20s
+server:  port: 8080  servlet:    context-path: /questionnaire    encoding:      enabled: true      charset: UTF-8      force: true  shutdown: gracefulmanagement:  endpoint:    health:      probes:        enabled: truespring:  profiles:    active: '@profileActive@'  lifecycle:    timeout-per-shutdown-phase: 20s
   jackson:    date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8  servlet:    multipart:      max-request-size: 30MB
       max-file-size: 30MB  datasource:    druid:      initial-size: 2      min-idle: 2      max-active: 5      max-wait: 60000      time-between-eviction-runs-millis: 60000      min-evictable-idle-time-millis: 300000      validation-query: select 1      test-while-idle: true      test-on-borrow: false      test-on-return: false  mail:    properties:      mail:

@@ -186,7 +186,7 @@ public interface RespRecDAO {
 			"(CASE WHEN RES.CNT IS NULL THEN 0 ELSE RES.CNT END) AS CNT, " +
 			"(CASE WHEN RES.AVG_SCRE IS NULL THEN 0 ELSE RES.AVG_SCRE END) AS AVG_SCRE, " +
 			"(CASE WHEN RES.AVG_SPND IS NULL THEN 0 ELSE RES.AVG_SPND END) AS AVG_SPND " +
-		"FROM (SELECT * FROM GRP_INFO WHERE DPRT_NAM = #{dprtNam}) GRP " +
+		"FROM (SELECT * FROM GRP_INFO WHERE DPRT_NAM LIKE CONCAT(#{dprtNam},'%')) GRP " +
 		"LEFT JOIN (" +
 			"SELECT USR.DPRT_NAM AS DPRT_NAM, USR.GRP_NAM AS GRP_NAM, " +
 				"COUNT(1) AS CNT, AVG(REC.SCRE) AS AVG_SCRE, AVG(REC.SPND) AS AVG_SPND " +
@@ -198,7 +198,7 @@ public interface RespRecDAO {
 					"AND LAST_MANT_USR = #{lastMantUsr} AND BGN_TIME BETWEEN #{bgnTimeBgn, jdbcType = TIMESTAMP} AND #{bgnTimeEnd, jdbcType = TIMESTAMP}" +
 					") " +
 				") REC " +
-			"LEFT JOIN (SELECT * FROM USR_INFO WHERE DPRT_NAM = #{dprtNam}) USR ON REC.OPEN_ID = USR.OPEN_ID " +
+			"LEFT JOIN (SELECT * FROM USR_INFO WHERE DPRT_NAM LIKE CONCAT(#{dprtNam},'%')) USR ON REC.OPEN_ID = USR.OPEN_ID " +
 			"GROUP BY USR.DPRT_NAM, USR.GRP_NAM" +
 		") RES ON GRP.DPRT_NAM = RES.DPRT_NAM AND GRP.GRP_NAM = RES.GRP_NAM"
 	)
@@ -255,7 +255,7 @@ public interface RespRecDAO {
 		")" +
 		"AND EXISTS (" +
 			"SELECT 1 FROM USR_INFO WHERE RESP_REC.OPEN_ID = USR_INFO.OPEN_ID " +
-			"AND DPRT_NAM = #{dprtNam}" +
+			"AND DPRT_NAM LIKE CONCAT(#{dprtNam},'%')" +
 		")" +
 		"GROUP BY EXAM_CD"
 	)
@@ -273,7 +273,7 @@ public interface RespRecDAO {
 			") " +
 			"AND EXISTS (" +
 				"SELECT 1 FROM USR_INFO WHERE RESP_REC.OPEN_ID = USR_INFO.OPEN_ID " +
-				"AND DPRT_NAM = #{dprtNam}" +
+				"AND DPRT_NAM LIKE CONCAT(#{dprtNam},'%')" +
 			")" +
 		") REC " +
 		"GROUP BY OPEN_ID " +
@@ -303,13 +303,13 @@ public interface RespRecDAO {
 			")" +
 			"AND EXISTS (" +
 				"SELECT 1 FROM USR_INFO WHERE RESP_REC.OPEN_ID = USR_INFO.OPEN_ID " +
-				"AND DPRT_NAM = #{dprtNam}" +
+				"AND DPRT_NAM LIKE CONCAT(#{dprtNam},'%')" +
 			")" +
 		") REC " +
 		"GROUP BY OPEN_ID " +
 		"HAVING CNT >= #{othIntCond} " +
 		"ORDER BY AVG_SCRE DESC " +
-		"LIMIT 5"
+		"LIMIT 10"
 	)
 	@ResultMap("UsrStat")
 	List<RespRecUsrStatEntity> findIntvUsrStatByAvgScre(RespRecIntvEntity entity);

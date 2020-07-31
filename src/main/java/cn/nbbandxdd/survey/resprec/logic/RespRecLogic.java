@@ -39,9 +39,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
-import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -254,8 +252,6 @@ public class RespRecLogic {
 					
 					helper.addInline(
 						"imgLine", new ByteArrayDataSource(genWeekRptCntChart(model), "image/png"));
-					helper.addInline(
-						"imgBar", new ByteArrayDataSource(genWeekRptPtpnRateChart(model), "image/png"));
 					helper.addAttachment(
 						MimeUtility.encodeWord(one.getMailSubj() + ".docx", "UTF-8", "B"),
 						new ByteArrayDataSource(
@@ -377,12 +373,7 @@ public class RespRecLogic {
 	
 	private byte[] genWeekRptCntChart(WeekRptModel model) throws IOException {
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("M月d日");
-		
-		DefaultCategoryDataset lineDataset = new DefaultCategoryDataset();
-		model.getExamStat().forEach(a -> lineDataset.addValue(a.getCnt(), "参与人数", sdf.format(a.getBgnTime())));
-		model.getExamStat().forEach(a -> lineDataset.addValue(a.getAvgScre(), "平均分", sdf.format(a.getBgnTime())));
-		model.getExamStat().forEach(a -> lineDataset.addValue(a.getCnt100(), "场满分人数", sdf.format(a.getBgnTime())));
+		SimpleDateFormat sdf = new SimpleDateFormat("M.d");
 		
 		StandardChartTheme theme = new StandardChartTheme("CN");
 		theme.setExtraLargeFont(new Font(Font.SANS_SERIF, Font.BOLD, 10));
@@ -393,8 +384,13 @@ public class RespRecLogic {
 		theme.setPlotOutlinePaint(Color.WHITE);
 		ChartFactory.setChartTheme(theme);
 		
+		DefaultCategoryDataset lineDataset = new DefaultCategoryDataset();
+		model.getExamStat().forEach(a -> lineDataset.addValue(a.getCnt(), "number of participants", sdf.format(a.getBgnTime())));
+		model.getExamStat().forEach(a -> lineDataset.addValue(a.getAvgScre(), "average score", sdf.format(a.getBgnTime())));
+		model.getExamStat().forEach(a -> lineDataset.addValue(a.getCnt100(), "number of participants with perfect score", sdf.format(a.getBgnTime())));
+
 		JFreeChart lineChart = ChartFactory.createLineChart(
-			String.format("%s%s-%s线上练习数据分布", model.getDprtNam(), sdf.format(model.getFirst()), sdf.format(model.getNow())),
+			String.format("%s-%s", sdf.format(model.getFirst()), sdf.format(model.getNow())),
 			StringUtils.EMPTY, StringUtils.EMPTY,
 			lineDataset, PlotOrientation.VERTICAL, 
 			true, true, false);
@@ -408,42 +404,7 @@ public class RespRecLogic {
 			return out.toByteArray();
 		}
 	}
-	
-	private byte[] genWeekRptPtpnRateChart(WeekRptModel model) throws IOException {
-		
-		DefaultCategoryDataset barDataset = new DefaultCategoryDataset();
-		model.getGrpStat().sort((a, b) -> (int)(b.getPtpnRate() * 100.0 - a.getPtpnRate() * 100.0));
-		model.getGrpStat().forEach(a -> barDataset.addValue(a.getPtpnRate() * 100.0, "参与率", a.getGrpNam()));
-		
-		StandardChartTheme theme = new StandardChartTheme("CN");
-		theme.setExtraLargeFont(new Font(Font.SANS_SERIF, Font.BOLD, 10));
-		theme.setLargeFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
-		theme.setRegularFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
-		theme.setSmallFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
-		theme.setPlotBackgroundPaint(Color.WHITE);
-		theme.setPlotOutlinePaint(Color.WHITE);
-		ChartFactory.setChartTheme(theme);
-		
-		JFreeChart barChart = ChartFactory.createBarChart(
-			String.format("%s各职能组练习参与率", model.getDprtNam()),
-			StringUtils.EMPTY, StringUtils.EMPTY,
-			barDataset, PlotOrientation.VERTICAL,
-			false, false, false);
-		barChart.setBackgroundPaint(Color.WHITE);
-		
-		CategoryPlot plot = barChart.getCategoryPlot();
-		BarRenderer render = (BarRenderer)plot.getRenderer();
-		render.setSeriesPaint(0, new Color(218, 150, 149));
-		
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-			
-			ChartUtils.writeChartAsPNG(out, barChart, 480, 290);
-			out.flush();
-			
-			return out.toByteArray();
-		}
-	}
-	
+
 	private Context genWeekRptMailContext(WeekRptModel model) {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("M月d日");
@@ -451,12 +412,12 @@ public class RespRecLogic {
 		Context context = new Context();
 		
 		// para1
-		context.setVariable("para1", String.format("%s技委会项目经理线上考试筹备组于%s至%s，共编写并发布%d期线上练习题目。",
+		context.setVariable("para1", String.format("%s技委会于%s至%s，共编写并发布%d期线上练习题目。",
 			model.getDprtNam(), sdf.format(model.getFirst()), sdf.format(model.getNow()), model.getExamStat().size()));
 		
 		// para2
 		context.setVariable("para2", String.format(
-			"本期共组织%d场项目经理在线练习，场均%d人参与，峰值参与人数达到%d人，场平均分%.2f分，场均满分人数%d人，场均满分人数占比%.2f%%。",
+			"本期共组织%d场在线练习，场均%d人参与，峰值参与人数达到%d人，场平均分%.2f分，场均满分人数%d人，场均满分人数占比%.2f%%。",
 			model.getExamStat().size(),
 			model.getExamStat().stream().mapToInt(a -> a.getCnt()).sum() / model.getExamStat().size(),
 			model.getExamStat().stream().mapToInt(a -> a.getCnt()).max().getAsInt(),
@@ -467,10 +428,10 @@ public class RespRecLogic {
 		
 		// para31 para32
 		model.getGrpStat().sort((a, b) -> (int)(b.getPtpnRate() * 100.00 - a.getPtpnRate() * 100.0));
-		List<String> lisSnip3 = model.getGrpStat().stream().map(a -> String.format("%s参与率为%.0f%%", a.getGrpNam(), a.getPtpnRate() * 100.0)).collect(Collectors.toList());
+		List<String> lisSnip3 = model.getGrpStat().stream().limit(5).map(a -> String.format("%s参与率为%.0f%%", a.getGrpNam(), a.getPtpnRate() * 100.0)).collect(Collectors.toList());
 
 		context.setVariable("para31", String.format(
-				"经统计各职能组参与线上练习参与率：%s。", String.join("，", lisSnip3)
+				"经统计各职能组参与线上练习参与率前五名为：%s。", String.join("，", lisSnip3)
 		));
 		context.setVariable("para32", String.format("整体参与率为%.0f%%，",
 			model.getGrpStat().stream().mapToDouble(a -> a.getPtpnRate() * a.getTotCnt()).sum() /
@@ -484,7 +445,7 @@ public class RespRecLogic {
 			"个人平均分排名纳入数据统计的共计%d期练习，为排除小样本统计导致的排名靠前，本次筛选至少参加过%d场练习的人员进行平均分排名。",
 			model.getExamStat().size(), (int)(model.getExamStat().size() * 0.8)
 		));
-		context.setVariable("para42", String.format("位居前五名的分别为%s。", String.join("、", lisSnip4)));
+		context.setVariable("para42", String.format("位居前十名的分别为%s。", String.join("、", lisSnip4)));
 		
 		return context;
 	}
@@ -497,43 +458,54 @@ public class RespRecLogic {
 		) {
 			SimpleDateFormat sdf = new SimpleDateFormat("M月d日");
 			
-			// 项目经理线上练习分析
+			// 天研“安全生产季”线上答题分析
 			{
 				// 题目
 				XWPFParagraph titlePar = doc.createParagraph();
 				titlePar.setAlignment(ParagraphAlignment.CENTER);
 				titlePar.setSpacingAfter(31 * 20);
-				
+
 				XWPFRun titleRun = titlePar.createRun();
-				titleRun.setText(model.getDprtNam() + "项目经理线上练习分析");
+				titleRun.setText(model.getDprtNam() + "天研“安全生产季”线上答题分析");
 				titleRun.setFontFamily("黑体");
 				titleRun.setFontSize(20);
 			}
 			
-			// 一、本期线上考试概况
+			// 一、本期线上练习概况
 			{
 				// 题目
 				XWPFParagraph titlePar = doc.createParagraph();
 				titlePar.setAlignment(ParagraphAlignment.LEFT);
-				
+
 				XWPFRun titleRun = titlePar.createRun();
 				titleRun.setText("一、本期线上练习概况");
 				titleRun.setFontFamily("仿宋");
 				titleRun.setFontSize(18);
 				titleRun.setBold(true);
+
+				// 自然段1
+				XWPFParagraph paraPar1 = doc.createParagraph();
+				paraPar1.setAlignment(ParagraphAlignment.LEFT);
+				paraPar1.setIndentationFirstLine(16 * 20 * 2);
+
+				XWPFRun paraRun1 = paraPar1.createRun();
+				paraRun1.setText(String.format("为加强生产运行安全，根据天津研发部“安全生产季”活动方案，%s技委会于7月27日开始进行安全生产相关制度答题分享活动，答题内容主要包括变更、问题、事件、生产应急相关制度。",
+					model.getDprtNam()));
+				paraRun1.setFontFamily("仿宋");
+				paraRun1.setFontSize(16);
+
+				// 自然段2
+				XWPFParagraph paraPar2 = doc.createParagraph();
+				paraPar2.setAlignment(ParagraphAlignment.LEFT);
+				paraPar2.setIndentationFirstLine(16 * 20 * 2);
 				
-				// 自然段
-				XWPFParagraph paraPar = doc.createParagraph();
-				paraPar.setAlignment(ParagraphAlignment.LEFT);
-				paraPar.setIndentationFirstLine(16 * 20 * 2);
-				
-				XWPFRun paraRun = paraPar.createRun();
-				paraRun.setText(String.format("%s技委会项目经理线上考试筹备组于%s至%s，共编写并发布%d期线上练习题目。",
+				XWPFRun paraRun2 = paraPar2.createRun();
+				paraRun2.setText(String.format("%s技委会于%s至%s，共编写并发布%d期线上练习题目。",
 					model.getDprtNam(), sdf.format(model.getFirst()), sdf.format(model.getNow()), model.getExamStat().size()));
-				paraRun.setFontFamily("仿宋");
-				paraRun.setFontSize(16);
+				paraRun2.setFontFamily("仿宋");
+				paraRun2.setFontSize(16);
 			}
-			
+
 			// 二、本期数据分析
 			{
 				// 题目
@@ -639,42 +611,49 @@ public class RespRecLogic {
 					subParaPar.setIndentationFirstLine(16 * 20 * 2);
 
 					model.getGrpStat().sort((a, b) -> (int)(b.getPtpnRate() * 100.00 - a.getPtpnRate() * 100.0));
-					List<String> lisSnip = model.getGrpStat().stream().map(a -> String.format("%s参与率为%.0f%%", a.getGrpNam(), a.getPtpnRate() * 100.0)).collect(Collectors.toList());
-					
+					List<String> lisSnip = model.getGrpStat().stream().limit(5).map(a -> String.format("%s参与率为%.0f%%", a.getGrpNam(), a.getPtpnRate() * 100.0)).collect(Collectors.toList());
+
 					XWPFRun subParaRun = subParaPar.createRun();
 					subParaRun.setText(String.format(
-						"经统计各职能组参与线上练习参与率：%s。整体参与率为%.0f%%，后续将进一步调动大家参与的积极性，多加练习。",
+						"经统计各职能组参与线上练习参与率前五名为：%s。整体参与率为%.0f%%，后续将进一步调动大家参与的积极性，多加练习。",
 						String.join("，", lisSnip),
 						model.getGrpStat().stream().mapToDouble(a -> a.getPtpnRate() * a.getTotCnt()).sum() /
 							model.getGrpStat().stream().mapToDouble(a -> a.getTotCnt()).sum() * 100.0));
 					subParaRun.setFontFamily("仿宋");
 					subParaRun.setFontSize(16);
 					
-					// 图表
-					XWPFChart subChart = doc.createChart();
-					subChart.setTitleText(
-						String.format("%s-%s各职能组练习参与率", sdf.format(model.getFirst()), sdf.format(model.getNow())));
-					subChart.setChartHeight(3000000L);
-					subChart.setChartWidth(5000000L);
+					// 表格
+					XWPFTable subTable = doc.createTable(model.getGrpStat().size() + 1, 3);
 					
-					XDDFCategoryAxis bottomAxis = subChart.createCategoryAxis(AxisPosition.BOTTOM);
-					XDDFValueAxis leftAxis = subChart.createValueAxis(AxisPosition.LEFT);
-					leftAxis.setMinimum(0);
-					leftAxis.setMaximum(1);
-					XDDFChartData subChartData = subChart.createData(ChartTypes.LINE, bottomAxis, leftAxis);
+					XWPFTableRow header = subTable.getRow(0);
+					header.setHeight(300);
 					
-					// x
-					XDDFDataSource<String> dsGrpNam = XDDFDataSourcesFactory.fromArray(
-						model.getGrpStat().stream().map(a -> a.getGrpNam())
-						.collect(Collectors.toList()).toArray(new String[0]));
+					XWPFTableCell cell0 = header.getCell(0);
+					cell0.setWidth("1700");
+					cell0.setText("排名");
 					
-					// y
-					XDDFNumericalDataSource<Double> dsPtpnRate = XDDFDataSourcesFactory.fromArray(
-						model.getGrpStat().stream().map(a -> a.getPtpnRate())
-						.collect(Collectors.toList()).toArray(new Double[0]));
-					subChartData.addSeries(dsGrpNam, dsPtpnRate);
+					XWPFTableCell cell1 = header.getCell(1);
+					cell1.setWidth("3000");
+					cell1.setText("职能组");
 					
-					subChart.plot(subChartData);
+					XWPFTableCell cell2 = header.getCell(2);
+					cell2.setWidth("3000");
+					cell2.setText("参与率");
+					
+					for (int i = 0; i < model.getGrpStat().size(); ++i) {
+						
+						XWPFTableRow row = subTable.getRow(i + 1);
+						row.setHeight(300);
+						
+						row.getCell(0).setText(String.valueOf(i + 1));
+						row.getCell(0).setWidth("1700");
+
+						row.getCell(1).setText(model.getGrpStat().get(i).getGrpNam());
+						row.getCell(1).setWidth("3000");
+
+						row.getCell(2).setText(String.format("%.0f%%", model.getGrpStat().get(i).getPtpnRate() * 100.0));
+						row.getCell(2).setWidth("3000");
+					}
 				}
 				
 				// （3）各职能组练习平均分
@@ -697,42 +676,49 @@ public class RespRecLogic {
 					subParaPar.setIndentationFirstLine(16 * 20 * 2);
 					
 					model.getGrpStat().sort((a, b) -> (int)(b.getAvgScre() - a.getAvgScre()));
-					List<String> lisSnip = model.getGrpStat().stream().map(a -> String.format("%s平均分为%.2f", a.getGrpNam(), a.getAvgScre())).collect(Collectors.toList());
-					
+					List<String> lisSnip = model.getGrpStat().stream().limit(5).map(a -> String.format("%s平均分为%.2f", a.getGrpNam(), a.getAvgScre())).collect(Collectors.toList());
+
 					XWPFRun subParaRun = subParaPar.createRun();
 					subParaRun.setText(
-						String.format("经统计各职能组参与线上练习平均分：%s。", String.join("，", lisSnip))
+						String.format("经统计各职能组参与线上练习平均分前五名为：%s。", String.join("，", lisSnip))
 					);
 					subParaRun.setFontFamily("仿宋");
 					subParaRun.setFontSize(16);
 					
-					// 图表
-					XWPFChart subChart = doc.createChart();
-					subChart.setTitleText(
-						String.format("%s-%s各职能组练习平均分", sdf.format(model.getFirst()), sdf.format(model.getNow())));
-					subChart.setChartHeight(3000000L);
-					subChart.setChartWidth(5000000L);
+					// 表格
+					XWPFTable subTable = doc.createTable(model.getGrpStat().size() + 1, 3);
 					
-					XDDFCategoryAxis bottomAxis = subChart.createCategoryAxis(AxisPosition.BOTTOM);
-					XDDFValueAxis leftAxis = subChart.createValueAxis(AxisPosition.LEFT);
-					leftAxis.setMinimum(0);
-					leftAxis.setMaximum(100);
-					XDDFChartData subChartData = subChart.createData(ChartTypes.LINE, bottomAxis, leftAxis);
+					XWPFTableRow header = subTable.getRow(0);
+					header.setHeight(300);
 					
-					// x
-					XDDFDataSource<String> dsGrpNam = XDDFDataSourcesFactory.fromArray(
-						model.getGrpStat().stream().map(a -> a.getGrpNam())
-						.collect(Collectors.toList()).toArray(new String[0]));
+					XWPFTableCell cell0 = header.getCell(0);
+					cell0.setWidth("1700");
+					cell0.setText("排名");
 					
-					// y
-					XDDFNumericalDataSource<Double> dsAvgScre = XDDFDataSourcesFactory.fromArray(
-						model.getGrpStat().stream().map(a -> a.getAvgScre())
-						.collect(Collectors.toList()).toArray(new Double[0]));
-					subChartData.addSeries(dsGrpNam, dsAvgScre);
+					XWPFTableCell cell1 = header.getCell(1);
+					cell1.setWidth("3000");
+					cell1.setText("职能组");
 					
-					subChart.plot(subChartData);
+					XWPFTableCell cell2 = header.getCell(2);
+					cell2.setWidth("3000");
+					cell2.setText("平均分");
+					
+					for (int i = 0; i < model.getGrpStat().size(); ++i) {
+						
+						XWPFTableRow row = subTable.getRow(i + 1);
+						row.setHeight(300);
+						
+						row.getCell(0).setText(String.valueOf(i + 1));
+						row.getCell(0).setWidth("1700");
+
+						row.getCell(1).setText(model.getGrpStat().get(i).getGrpNam());
+						row.getCell(1).setWidth("3000");
+
+						row.getCell(2).setText(String.format("%.2f", model.getGrpStat().get(i).getAvgScre()));
+						row.getCell(2).setWidth("3000");
+					}
 				}
-				
+
 				// （4）个人参与度排名
 				{
 					// 题目
@@ -832,7 +818,7 @@ public class RespRecLogic {
 					
 					XWPFRun subParaRun = subParaPar.createRun();
 					subParaRun.setText(String.format(
-						"个人平均分排名纳入数据统计的共计%d期练习，为排除小样本统计导致的排名靠前，本次筛选至少参加过%d场练习的人员进行平均分排名。位居前五名的分别为%s。",
+						"个人平均分排名纳入数据统计的共计%d期练习，为排除小样本统计导致的排名靠前，本次筛选至少参加过%d场练习的人员进行平均分排名。位居前十名的分别为%s。",
 						model.getExamStat().size(), (int)(model.getExamStat().size() * 0.8),
 						String.join("、", lisSnip)
 					));
@@ -896,7 +882,7 @@ public class RespRecLogic {
 				paraPar.setSpacingBefore(16 * 20);
 				
 				XWPFRun paraRun = paraPar.createRun();
-				paraRun.setText("筹备组将持续优化目前的训练方式，提高全体同事的考试热情，为项目经理考试打下坚实基础。");
+				paraRun.setText("请全体员工高度重视安全生产制度学习，积极参与答题活动。");
 				paraRun.setFontFamily("仿宋");
 				paraRun.setFontSize(16);
 				
@@ -905,7 +891,7 @@ public class RespRecLogic {
 				namePar.setSpacingBefore(16 * 20);
 				
 				XWPFRun nameRun = namePar.createRun();
-				nameRun.setText(model.getDprtNam() + "项目经理线上考试筹备组");
+				nameRun.setText(model.getDprtNam() + "技委会");
 				nameRun.setFontFamily("仿宋");
 				nameRun.setFontSize(16);
 				
