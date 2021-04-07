@@ -4,14 +4,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.lang.Nullable;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 /**
  * <p>Jwt拦截器。清除{@code JwtHolder}中保存的openId。
  * 
  * @author howcurious
  */
-public class JwtInterceptor extends HandlerInterceptorAdapter {
+public class JwtInterceptor implements AsyncHandlerInterceptor {
 
 	/**
 	 * 清除{@code JwtHolder}中保存的openId。
