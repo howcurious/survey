@@ -158,14 +158,26 @@ class ExamServiceTest {
 			.andExpect(status().isOk()).andDo(print());
 			
 			// /exam/findToAnsw
-			ExamVO svfta = new ExamVO();
-			svfta.setExamCd(examVO.getExamCd());
-			
+			ExamVO svfta1 = new ExamVO();
+			svfta1.setExamCd(examVO.getExamCd());
+
 			mockMvc.perform(
 				post("/exam/findToAnsw")
 				.header("authorization", "Bearer " + loginVO.getToken())
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(svfta))
+				.content(objectMapper.writeValueAsString(svfta1))
+			)
+			.andExpect(status().isOk()).andDo(print());
+
+			// /exam/findToAnsw
+			ExamVO svfta2 = new ExamVO();
+			svfta2.setExamCd("19700101000000000");
+
+			mockMvc.perform(
+				post("/exam/findToAnsw")
+				.header("authorization", "Bearer " + loginVO.getToken())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(svfta2))
 			)
 			.andExpect(status().isOk()).andDo(print());
 			

@@ -160,7 +160,9 @@ public class ExamLogic {
 	}
 
 	public ExamEntity findToAnsw(ExamEntity entity) {
-		
+
+		entity.setLastMantUsr(JwtHolder.get());
+
 		ExamEntity se = examDAO.findToAnsw(entity);
 		if (ICommonConstDefine.COMMON_IND_NO.equals(CommonUtils.fillbackRpetInd(entity.getExamCd())) ||
 			CollectionUtils.isNotEmpty(se.getQuesList())) {

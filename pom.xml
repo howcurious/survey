@@ -30,7 +30,7 @@
 
 	<groupId>cn.nbbandxdd</groupId>
 	<artifactId>survey</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 	<name>survey</name>
 	<description>wechat survey</description>
 
