@@ -144,7 +144,6 @@ public interface ExamDAO {
 		"FROM QUES " +
 		"RIGHT JOIN (SELECT * FROM EXAM_QUES_RLN WHERE EXAM_CD = #{examCd}) RLN " +
 			"ON QUES.QUES_CD = RLN.QUES_CD " +
-		"WHERE QUES.LAST_MANT_USR IN (SELECT ROLE_ID FROM ROLE_INFO WHERE OPEN_ID = #{lastMantUsr}) " +
 		"ORDER BY RLN.SEQ_NO"
 	)
 	@Results(id = "QuesList", value = {

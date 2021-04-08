@@ -152,16 +152,12 @@ public class ExamLogic {
 	}
 	
 	public Page<QuesByRespEntity> findQuesList(ExamEntity entity, Integer pageNum, Integer pageSize) {
-		
-		entity.setLastMantUsr(JwtHolder.get());
-		
+
 		PageHelper.startPage(pageNum, pageSize);
 		return examDAO.findQuesList(entity);
 	}
 
 	public ExamEntity findToAnsw(ExamEntity entity) {
-
-		entity.setLastMantUsr(JwtHolder.get());
 
 		ExamEntity se = examDAO.findToAnsw(entity);
 		if (ICommonConstDefine.COMMON_IND_NO.equals(CommonUtils.fillbackRpetInd(entity.getExamCd())) ||
