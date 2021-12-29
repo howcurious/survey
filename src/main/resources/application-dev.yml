@@ -1,23 +1,16 @@
-logging:  level:    root: DEBUG
+logging:
+  level:
+    root: DEBUG
 
 spring:
-  datasource:
-    druid:
-      driver-class-name: org.h2.Driver
-      url: jdbc:h2:mem:testdb;mode=mysql
-      username: sa
-      password: 
-  mail:
-    host: 
-    port: 465
-    username: 
-    password: 
-
-pagehelper:
-  helper-dialect: h2
+  r2dbc:
+    url: r2dbc:h2:mem:///testdb?allowMultiQueries=true&serverTimezone=Asia%2FShanghai
+    username:
+    password:
 
 wechat:
   app-id: 
   app-secret: 
 
-jwt:  key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
+jwt:
+  key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttest

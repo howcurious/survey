@@ -1,0 +1,17 @@
+{
+  "properties": [
+    {
+      "name": "wechat.app-id",
+      "type": "java.lang.String",
+      "description": "wechat app id."
+    }, {
+      "name": "wechat.app-secret",
+      "type": "java.lang.String",
+      "description": "wechat app secret."
+    }, {
+      "name": "jwt.key",
+      "type": "java.lang.String",
+      "description": "key in SecretKeySpec."
+    }
+  ]
+}

@@ -1,108 +1,146 @@
 package cn.nbbandxdd.survey.usrinfo.service;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import cn.nbbandxdd.survey.common.ICommonConstDefine;
+import cn.nbbandxdd.survey.common.exception.SurveyValidationException;
+import cn.nbbandxdd.survey.grpinfo.repository.GrpInfoRepository;
+import cn.nbbandxdd.survey.usrinfo.repository.RoleInfoRepository;
+import cn.nbbandxdd.survey.usrinfo.repository.UsrInfoRepository;
+import cn.nbbandxdd.survey.usrinfo.repository.entity.UsrInfoEntity;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
-import cn.nbbandxdd.survey.common.validation.group.InsertGroup;
-import cn.nbbandxdd.survey.common.validation.group.UpdateGroup;
-import cn.nbbandxdd.survey.usrinfo.dao.entity.UsrInfoEntity;
-import cn.nbbandxdd.survey.usrinfo.logic.UsrInfoLogic;
-import cn.nbbandxdd.survey.usrinfo.service.vo.UsrInfoVO;
+import java.time.LocalDateTime;
 
 /**
  * <p>用户信息Service。
- * 
+ *
  * <ul>
- * <li>新增实名登记，使用 {@link #insert(UsrInfoVO)}。</li>
- * <li>修改实名登记，使用 {@link #update(UsrInfoVO)}。</li>
- * <li>查看实名登记，使用 {@link #load()}。</li>
+ * <li>新增实名登记，对外服务接口，使用{@link #insert(Mono)}。</li>
+ * <li>修改实名登记，对外服务接口，使用{@link #update(Mono)}。</li>
+ * <li>查询实名登记，对外服务接口，使用{@link #loadByKey()}。</li>
+ * <li>判断用户是否已实名登记，<strong>内部使用接口</strong>，使用{@link #existsByKey(String)}。</li>
  * </ul>
- * 
+ *
  * @author howcurious
  */
-@RestController
-@RequestMapping("/usrinfo")
+@Service
 public class UsrInfoService {
-	
-	@Autowired
-	private ModelMapper modelMapper;
 
-	@Autowired
-	private UsrInfoLogic usrInfoLogic;
-	
-	/**
-	 * <p>新增实名登记。
-	 * 
-	 * <p>输入字段：
-	 * <ul>
-	 * <li>{@code dprtNam}：部门名（选输）。如果为空白，则依据职能组名确定。
-	 * 校验失败情形：为空白时，职能组名无法唯一确定部门名；不为空白时，与职能组名不匹配。</li>
-	 * <li>{@code grpNam}：职能组名（必输）。校验失败情形：空白字段；与部门名不匹配。</li>
-	 * <li>{@code usrNam}：用户名（必输）。校验失败情形：空白字段。</li>
-	 * </ul>
-	 * 
-	 * <p>输出字段：无。
-	 * 
-	 * @param sv 用户信息VO
-	 * @see UsrInfoVO
-	 */
-	@PostMapping("/insert")
-	public void insert(@RequestBody @Validated(InsertGroup.class) UsrInfoVO sv) {
-		
-		usrInfoLogic.insert(modelMapper.map(sv, UsrInfoEntity.class));
-	}
-	
-	/**
-	 * <p>修改实名登记。
-	 * 
-	 * <p>输入字段：
-	 * <ul>
-	 * <li>{@code dprtNam}：部门名（选输）。如果为空白，则依据职能组名确定。
-	 * 校验失败情形：为空白时，职能组名无法唯一确定部门名；不为空白时，与职能组名不匹配。</li>
-	 * <li>{@code grpNam}：职能组名（必输）。校验失败情形：空白字段；与部门名不匹配。</li>
-	 * <li>{@code usrNam}：用户名（必输）。校验失败情形：空白字段。</li>
-	 * </ul>
-	 * 
-	 * <p>输出字段：无。
-	 * 
-	 * @param sv 用户信息VO
-	 * @see UsrInfoVO
-	 */
-	@PostMapping("/update")
-	public void update(@RequestBody @Validated(UpdateGroup.class) UsrInfoVO sv) {
-		
-		usrInfoLogic.update(modelMapper.map(sv, UsrInfoEntity.class));
-	}
-	
-	/**
-	 * <p>查看实名登记。依据Http请求报文头authorization，返回用户实名登记信息。
-	 * 
-	 * <p>输入字段：无。
-	 * 
-	 * <p>输出字段：
-	 * <ul>
-	 * <li>{@code dprtNam}：部门名。</li>
-	 * <li>{@code grpNam}：职能组名。</li>
-	 * <li>{@code usrNam}：用户名。</li>
-	 * </ul>
-	 * 
-	 * @return 用户信息VO
-	 * @see UsrInfoVO
-	 */
-	@PostMapping("/load")
-	public UsrInfoVO load() {
-		
-		UsrInfoEntity se = usrInfoLogic.loadByKey();
-		
-		if (null == se) {
-			
-			return null;
-		}
-		return modelMapper.map(se, UsrInfoVO.class);
-	}
+    /**
+     * <p>用户信息Repository。
+     */
+    private final UsrInfoRepository usrInfoRepository;
+
+    /**
+     * <p>角色信息Repository。
+     */
+    private final RoleInfoRepository roleInfoRepository;
+
+    /**
+     * <p>分组信息Repository。
+     */
+    private final GrpInfoRepository grpInfoRepository;
+
+    /**
+     * <p>构造器。
+     *
+     * @param usrInfoRepository 用户信息Repository
+     * @param roleInfoRepository 角色信息Repository
+     * @param grpInfoRepository 分组信息Repository
+     */
+    public UsrInfoService(
+        UsrInfoRepository usrInfoRepository, RoleInfoRepository roleInfoRepository, GrpInfoRepository grpInfoRepository) {
+
+        this.usrInfoRepository = usrInfoRepository;
+        this.roleInfoRepository = roleInfoRepository;
+        this.grpInfoRepository = grpInfoRepository;
+    }
+
+    /**
+     * <p>新增实名登记，对外服务接口。补齐{@code openId}和注册时间戳{@code regTmstp}。
+     *
+     * @param entity 用户信息Entity
+     * @return 无
+     */
+    @Transactional
+    public Mono<Void> insert(Mono<UsrInfoEntity> entity) {
+
+        return entity
+            .filter(one -> StringUtils.isNotBlank(one.getDprtNam()) &&
+                StringUtils.isNotBlank(one.getGrpNam()))
+            .filterWhen(one -> grpInfoRepository.findByDprtNamAndGrpNam(one.getDprtNam(), one.getGrpNam())
+                .map(en -> true).defaultIfEmpty(false))
+            .flatMap(one -> Mono.deferContextual(ctx -> {
+
+                one.setOpenId(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));
+                return Mono.just(one);
+            }))
+            .map(one -> {
+
+                one.setRegTmstp(LocalDateTime.now());
+                one.setNew(true);
+                return one;
+            })
+            .flatMap(usrInfoRepository::save)
+            .flatMap(one -> roleInfoRepository.save(one.getOpenId(), ICommonConstDefine.USER_EVERYONE))
+            .switchIfEmpty(Mono.error(
+                new SurveyValidationException("新增实名登记校验失败。")))
+            .then();
+    }
+
+    /**
+     * <p>修改实名登记，对外服务接口。补齐{@code openId}和注册时间戳{@code regTmstp}。
+     *
+     * @param entity 用户信息Entity
+     * @return 无
+     */
+    @Transactional
+    public Mono<Void> update(Mono<UsrInfoEntity> entity) {
+
+        return entity
+            .filter(one -> StringUtils.isNotBlank(one.getDprtNam()) &&
+                StringUtils.isNotBlank(one.getGrpNam()))
+            .filterWhen(one -> grpInfoRepository.findByDprtNamAndGrpNam(one.getDprtNam(), one.getGrpNam())
+                .map(en -> true).defaultIfEmpty(false))
+            .flatMap(one -> Mono.deferContextual(ctx -> {
+
+                one.setOpenId(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));
+                return Mono.just(one);
+            }))
+            .map(one -> {
+
+                one.setRegTmstp(LocalDateTime.now());
+                one.setNew(false);
+                return one;
+            })
+            .flatMap(usrInfoRepository::save)
+            .switchIfEmpty(Mono.error(
+                new SurveyValidationException("修改实名登记校验失败。")))
+            .then();
+    }
+
+    /**
+     * <p>查询实名登记，对外服务接口。补齐{@code openId}。
+     *
+     * @return 用户信息Entity
+     */
+    public Mono<UsrInfoEntity> loadByKey() {
+
+        return Mono
+            .deferContextual(ctx -> Mono.just(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID).toString()))
+            .flatMap(usrInfoRepository::findById);
+    }
+
+    /**
+     * <p>判断用户是否已实名登记，<strong>内部使用接口</strong>。因不获取当前请求对应的openId，不能用于对外服务。
+     *
+     * @param openId openId
+     * @return 用户是否已实名登记
+     */
+    public Mono<Boolean> existsByKey(String openId) {
+
+        return usrInfoRepository.existsById(openId);
+    }
 }

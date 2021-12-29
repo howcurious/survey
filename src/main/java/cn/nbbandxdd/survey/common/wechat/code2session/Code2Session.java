@@ -1,38 +1,67 @@
 package cn.nbbandxdd.survey.common.wechat.code2session;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import cn.nbbandxdd.survey.common.ICommonConstDefine;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+
+/**
+ * <p>登录凭证校验。
+ *
+ * <ul>
+ * <li>获取登录凭证校验结果，使用 {@link #get(String)}。</li>
+ * </ul>
+ *
+ * @author howcurious
+ */
 @Component
 public class Code2Session {
 
-	@Value("${wechat.app-id}")
-	private String appid;
+    /**
+     * <p>小程序appId。
+     */
+    @Value("${wechat.app-id}")
+    private String appId;
 
-	@Value("${wechat.app-secret}")
-	private String appsecret;
+    /**
+     * <p>小程序appSecret。
+     */
+    @Value("${wechat.app-secret}")
+    private String appSecret;
 
-	private String url = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
-	
-	@Autowired
-	private RestTemplate textPlainRestTemplate;
-	
-	@Value("${spring.profiles.active:dev}")
-	private String activeProfile;
-	
-	public Code2SessionDTO get(String code) {
-		
-		if ("prod".equals(activeProfile)) {
-			
-			return textPlainRestTemplate.getForObject(
-				String.format(url, appid, appsecret, code), Code2SessionDTO.class);
-		}
+    /**
+     * <p>激活配置，默认：dev。
+     */
+    @Value("${spring.profiles.active:dev}")
+    private String activeProfile;
 
-		Code2SessionDTO dto = new Code2SessionDTO();
-		dto.setOpenid(code);
+    /**
+     * <p>获取登录凭证校验结果。
+     *
+     * @param jsCode 登录时获取的code
+     * @return 登录凭证校验DTO
+     */
+    public Mono<Code2SessionDTO> get(String jsCode) {
 
-		return dto;
-	}
+        if (!StringUtils.equals("prod", activeProfile)) {
+
+            Code2SessionDTO dto = new Code2SessionDTO();
+            dto.setOpenid(jsCode);
+            dto.setErrcode(ICommonConstDefine.WECHAT_ERRCODE_SUCCESS);
+
+            return Mono.just(dto);
+        }
+
+        return WebClient.create()
+            .get()
+            .uri("https://api.weixin.qq.com/sns/jscode2session?appid={appId}&secret={appSecret}&js_code={jsCode}&grant_type=authorization_code",
+                appId, appSecret, jsCode)
+            .retrieve()
+            .bodyToMono(Code2SessionDTO.class)
+            .timeout(Duration.ofSeconds(20));
+    }
 }

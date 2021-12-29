@@ -1,6 +1,6 @@
 # 答题微信小程序服务端
 
-项目主要基于 [Spring Boot](https://spring.io/projects/spring-boot) 和 [Mybatis](https://mybatis.org/mybatis-3)，提供简单的问卷创建、问卷作答等功能。
+项目主要基于 [Spring Boot](https://spring.io/projects/spring-boot) 提供简单的问卷创建、问卷作答等功能。
 
 ## 安装
 
