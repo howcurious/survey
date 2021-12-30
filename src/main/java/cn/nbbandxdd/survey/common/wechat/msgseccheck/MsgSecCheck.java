@@ -1,9 +1,14 @@
 package cn.nbbandxdd.survey.common.wechat.msgseccheck;
 
 import cn.nbbandxdd.survey.common.wechat.accesstoken.AccessTokenGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -63,7 +68,12 @@ public class MsgSecCheck {
             MsgSecCheckDTO dto = new MsgSecCheckDTO();
             dto.setContent(content);
 
-            return WebClient.create()
+            return WebClient.builder().exchangeStrategies(ExchangeStrategies.builder().codecs(configurer -> {
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                    configurer.customCodecs().registerWithDefaultConfig(new Jackson2JsonDecoder(mapper, MediaType.TEXT_PLAIN));
+                }).build()).build()
                 .post()
                 .uri("https://api.weixin.qq.com/wxa/msg_sec_check?access_token={accessToken}", accessToken)
                 .bodyValue(dto)

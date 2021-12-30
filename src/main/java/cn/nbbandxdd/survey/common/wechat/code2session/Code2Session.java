@@ -1,9 +1,14 @@
 package cn.nbbandxdd.survey.common.wechat.code2session;
 
 import cn.nbbandxdd.survey.common.ICommonConstDefine;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -56,7 +61,12 @@ public class Code2Session {
             return Mono.just(dto);
         }
 
-        return WebClient.create()
+        return WebClient.builder().exchangeStrategies(ExchangeStrategies.builder().codecs(configurer -> {
+
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                configurer.customCodecs().registerWithDefaultConfig(new Jackson2JsonDecoder(mapper, MediaType.TEXT_PLAIN));
+            }).build()).build()
             .get()
             .uri("https://api.weixin.qq.com/sns/jscode2session?appid={appId}&secret={appSecret}&js_code={jsCode}&grant_type=authorization_code",
                 appId, appSecret, jsCode)
