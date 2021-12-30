@@ -80,7 +80,7 @@ public class LoginController {
             .flatMap(one -> code2Session.get(one.getCode()))
             .flatMap(dto -> {
 
-                if (!StringUtils.equals(ICommonConstDefine.WECHAT_ERRCODE_SUCCESS, dto.getErrcode())) {
+                if (dto.getErrcode() != null && !StringUtils.equals(dto.getErrcode(), ICommonConstDefine.WECHAT_ERRCODE_SUCCESS)) {
 
                     return Mono.error(new SurveyValidationException(String.format("微信登录校验失败，%s：%s。", dto.getErrcode(), dto.getErrmsg())));
                 }
