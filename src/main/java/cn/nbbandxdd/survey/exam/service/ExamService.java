@@ -111,17 +111,28 @@ public class ExamService {
     public Mono<ExamEntity> insert(Mono<Tuple2<ExamEntity, List<ExamQuesTypRlnEntity>>> entity) {
 
         return entity
-            .filter(tup -> (StringUtils.isBlank(tup.getT1().getTypCd()) || ICommonConstDefine.EXAM_TYP_CD_SET.contains(tup.getT1().getTypCd())) &&
-                ICommonConstDefine.COMMON_IND_SET.contains(tup.getT1().getRpetInd()) &&
-                (StringUtils.isBlank(tup.getT1().getCntdwnInd()) || ICommonConstDefine.COMMON_IND_SET.contains(tup.getT1().getCntdwnInd())) &&
-                (StringUtils.isBlank(tup.getT1().getAnswImmInd()) || ICommonConstDefine.COMMON_IND_SET.contains(tup.getT1().getAnswImmInd())) &&
-                StringUtils.isNotBlank(tup.getT1().getTtl()))
-            .flatMap(tup -> Mono.deferContextual(ctx -> {
+            .flatMap(tup -> {
 
-                tup.getT1().setLastMantUsr(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));
-                return Mono.just(tup);
-            }))
-            .map(tup -> {
+                if (StringUtils.isNotBlank(tup.getT1().getTypCd()) && !ICommonConstDefine.EXAM_TYP_CD_SET.contains(tup.getT1().getTypCd())) {
+
+                    return Mono.error(new SurveyValidationException("问卷类型格式错误。"));
+                }
+                if (!ICommonConstDefine.COMMON_IND_SET.contains(tup.getT1().getRpetInd())) {
+
+                    return Mono.error(new SurveyValidationException("请选择是否可重复作答。"));
+                }
+                if (StringUtils.isNotBlank(tup.getT1().getCntdwnInd()) && !ICommonConstDefine.COMMON_IND_SET.contains(tup.getT1().getCntdwnInd())) {
+
+                    return Mono.error(new SurveyValidationException("请选择是否对每道题进行一分钟倒计时。"));
+                }
+                if (StringUtils.isNotBlank(tup.getT1().getAnswImmInd()) && !ICommonConstDefine.COMMON_IND_SET.contains(tup.getT1().getAnswImmInd())) {
+
+                    return Mono.error(new SurveyValidationException("请选择是否在作答后立刻显示正确答案。"));
+                }
+                if (StringUtils.isBlank(tup.getT1().getTtl())) {
+
+                    return Mono.error(new SurveyValidationException("请填写问卷题目。"));
+                }
 
                 if (StringUtils.isBlank(tup.getT1().getTypCd())) {
 
@@ -152,8 +163,13 @@ public class ExamService {
 
                 tup.getT1().setNew(true);
 
-                return tup;
+                return Mono.just(tup);
             })
+            .flatMap(tup -> Mono.deferContextual(ctx -> {
+
+                tup.getT1().setLastMantUsr(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));
+                return Mono.just(tup);
+            }))
             .flatMap(tup -> PubSerNoGenerator
                 .get(ICommonConstDefine.PUB_SER_NO_EXAM_EXAM_CD)
                 .map(serNo -> {
@@ -162,16 +178,35 @@ public class ExamService {
                     return tup;
                 }))
             .flatMap(tup -> examRepository.save(tup.getT1()).map(one -> tup))
-            .switchIfEmpty(Mono.error(new SurveyValidationException("新增问卷校验失败。")))
             .flatMap(tup -> Flux.fromIterable(tup.getT2())
-                .filter(one -> ICommonConstDefine.QUES_TYP_CD_SET.contains(one.getQuesTypCd()))
-                .flatMap(one -> Mono.deferContextual(ctx -> {
+                .flatMap(one -> {
 
-                    one.setExamCd(tup.getT1().getExamCd());
-                    one.setLastMantUsr(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));
-                    return Mono.just(one);
-                }))
-                .map(one -> {
+                    if (!ICommonConstDefine.QUES_TYP_CD_SET.contains(one.getQuesTypCd())) {
+
+                        return Mono.error(new SurveyValidationException("题目类型错误。"));
+                    }
+                    if (one.getScre() != null) {
+
+                        if (one.getScre() < 0) {
+
+                            return Mono.error(new SurveyValidationException("题目分值不小于0。"));
+                        }
+                        if (100 < one.getScre()) {
+
+                            return Mono.error(new SurveyValidationException("题目分值不大于100。"));
+                        }
+                    }
+                    if (one.getCnt() != null) {
+
+                        if (one.getCnt() < 0) {
+
+                            return Mono.error(new SurveyValidationException("题目个数不小于0。"));
+                        }
+                        if (100 < one.getCnt()) {
+
+                            return Mono.error(new SurveyValidationException("题目个数不大于100。"));
+                        }
+                    }
 
                     one.setScre(Math.min(null == one.getScre() ? 0 : one.getScre(), 100));
                     one.setCnt(Math.min(null == one.getCnt() ? 0 : one.getCnt(), 100));
@@ -180,8 +215,14 @@ public class ExamService {
                     one.setLastMantDat(now.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
                     one.setLastMantTmstp(now);
 
-                    return one;
+                    return Mono.just(one);
                 })
+                .flatMap(one -> Mono.deferContextual(ctx -> {
+
+                    one.setExamCd(tup.getT1().getExamCd());
+                    one.setLastMantUsr(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));
+                    return Mono.just(one);
+                }))
                 .flatMap(one -> examQuesTypRlnRepository.insert(one).map(cnt -> one))
                 .flatMap(one -> Flux
                     .zip(
