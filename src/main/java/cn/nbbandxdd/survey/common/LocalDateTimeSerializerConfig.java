@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 /**
  * <p>LocalDateTime序列化配置。
@@ -56,7 +56,7 @@ public class LocalDateTimeSerializerConfig {
 
             if (value != null) {
 
-                long timestamp = value.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli();
+                long timestamp = value.atZone(ZoneOffset.ofHours(8)).toInstant().toEpochMilli();
                 gen.writeNumber(timestamp);
             }
         }
@@ -81,7 +81,7 @@ public class LocalDateTimeSerializerConfig {
             long timestamp = p.getValueAsLong();
             if (0 < timestamp) {
 
-                return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.of("Asia/Shanghai"));
+                return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneOffset.ofHours(8));
             } else {
 
                 return null;
