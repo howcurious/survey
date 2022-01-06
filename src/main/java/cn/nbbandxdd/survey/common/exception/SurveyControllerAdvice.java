@@ -66,9 +66,10 @@ public class SurveyControllerAdvice {
     public ResponseEntity<ExceptionEntity> exceptionHandler(Exception e) {
 
         StringBuilder sb = new StringBuilder();
-        for (StackTraceElement ste : e.getStackTrace()) {
+        StackTraceElement[] stes = e.getStackTrace();
+        for (int i = 0; i < Math.min(stes.length, 10); ++i) {
 
-            sb.append(String.format(" at %s \n", ste.toString()));
+            sb.append(String.format(" at %s \n", stes[i].toString()));
         }
 
         log.error(e.getMessage());
