@@ -1,9 +1,13 @@
 package cn.nbbandxdd.survey.common;
 
+import org.modelmapper.AbstractConverter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * <p>实体转换。用于VO实例与Entity实例间转换。
@@ -29,6 +33,36 @@ public class ModelMapper implements InitializingBean {
     public ModelMapper() {
 
         modelMapper = new org.modelmapper.ModelMapper();
+        modelMapper.addConverter(
+
+            new AbstractConverter<Long, LocalDateTime>() {
+
+                @Override
+                protected LocalDateTime convert(Long source) {
+
+                    if (null == source) {
+
+                        return null;
+                    }
+                    return LocalDateTime.ofInstant(Instant.ofEpochMilli(source), ZoneId.of("Asia/Shanghai"));
+                }
+            }
+        );
+        modelMapper.addConverter(
+
+            new AbstractConverter<LocalDateTime, Long>() {
+
+                @Override
+                protected Long convert(LocalDateTime source) {
+
+                    if (null == source) {
+
+                        return null;
+                    }
+                    return source.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli();
+                }
+            }
+        );
     }
 
     /**

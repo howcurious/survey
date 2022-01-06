@@ -2,8 +2,6 @@ package cn.nbbandxdd.survey.exam.controller.vo;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 /**
  * <p>问卷VO。
  *
@@ -50,10 +48,10 @@ public class ExamVO {
     /**
      * <p>起始时间。
      */
-    private LocalDateTime bgnTime;
+    private Long bgnTime;
 
     /**
      * <p>截止时间。
      */
-    private LocalDateTime endTime;
+    private Long endTime;
 }

@@ -5,9 +5,12 @@ import cn.nbbandxdd.survey.exam.controller.vo.ExamQuesRlnVO;
 import cn.nbbandxdd.survey.exam.controller.vo.ExamQuesTypRlnVO;
 import cn.nbbandxdd.survey.exam.controller.vo.ExamVO;
 import cn.nbbandxdd.survey.login.controller.vo.LoginVO;
+import cn.nbbandxdd.survey.ques.controller.vo.AnswVO;
+import cn.nbbandxdd.survey.ques.controller.vo.QuesByPronVO;
 import cn.nbbandxdd.survey.ques.controller.vo.QuesVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.context.ActiveProfiles;
@@ -19,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@AutoConfigureWebTestClient(timeout = "60000")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("dev")
 class ExamControllerTest {
@@ -48,6 +52,8 @@ class ExamControllerTest {
             voi.setTtl("testexamX");
             voi.setDsc("testdscX");
             voi.setRpetInd("0");
+            voi.setBgnTime(1640966400000L);
+            voi.setEndTime(4070880000000L);
 
             ExamVO examVO = webTestClient
                 .post()
@@ -70,6 +76,31 @@ class ExamControllerTest {
                 .uri("/exam/update")
                 .header("authorization", "Bearer " + Objects.requireNonNull(loginVO).getToken())
                 .body(Mono.just(vou), ExamVO.class)
+                .exchange()
+                .expectStatus().isOk();
+
+            // /ques/insert
+            List<AnswVO> lisAnswVO = new ArrayList<>();
+            for (int i = 0; i < 1; ++i) {
+
+                AnswVO tmp = new AnswVO();
+                tmp.setDsc("testanswX" + i);
+                tmp.setScre(i);
+
+                lisAnswVO.add(tmp);
+            }
+
+            QuesByPronVO voqi = new QuesByPronVO();
+            voqi.setDsc("testquesX");
+            voqi.setComm("testcommX");
+            voqi.setTypCd("1");
+            voqi.setAnswList(lisAnswVO);
+
+            webTestClient
+                .post()
+                .uri("/ques/insert")
+                .header("authorization", "Bearer " + Objects.requireNonNull(loginVO).getToken())
+                .body(Mono.just(voqi), QuesByPronVO.class)
                 .exchange()
                 .expectStatus().isOk();
 
