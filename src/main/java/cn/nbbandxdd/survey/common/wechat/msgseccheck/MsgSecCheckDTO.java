@@ -11,6 +11,21 @@ import lombok.Data;
 public class MsgSecCheckDTO {
 
     /**
+     * <p>接口版本号，2.0版本为固定值2。
+     */
+    private Integer version;
+
+    /**
+     * <p>微信小程序中用户openId。
+     */
+    private String openid;
+
+    /**
+     * <p>场景枚举值（1 资料；2 评论；3 论坛；4 社交日志）。
+     */
+    private Integer scene;
+
+    /**
      * <p>需检测的文本内容。
      */
     private String content;

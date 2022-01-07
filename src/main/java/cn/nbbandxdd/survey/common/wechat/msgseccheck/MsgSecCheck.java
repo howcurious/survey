@@ -1,5 +1,6 @@
 package cn.nbbandxdd.survey.common.wechat.msgseccheck;
 
+import cn.nbbandxdd.survey.common.ICommonConstDefine;
 import cn.nbbandxdd.survey.common.wechat.accesstoken.AccessTokenGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuples;
 
 import java.time.Duration;
 
@@ -63,23 +65,30 @@ public class MsgSecCheck {
             return Mono.just(dto);
         }
 
-        return accessTokenGenerator.get().flatMap(accessToken -> {
+        return Mono
+            .zip(Mono.deferContextual(ctx -> Mono.just(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID).toString())),
+                accessTokenGenerator.get(),
+                Tuples::of)
+            .flatMap(tup -> {
 
-            MsgSecCheckDTO dto = new MsgSecCheckDTO();
-            dto.setContent(content);
+                MsgSecCheckDTO dto = new MsgSecCheckDTO();
+                dto.setVersion(2);
+                dto.setOpenid(tup.getT1());
+                dto.setScene(3);
+                dto.setContent(content);
 
-            return WebClient.builder().exchangeStrategies(ExchangeStrategies.builder().codecs(configurer -> {
+                return WebClient.builder().exchangeStrategies(ExchangeStrategies.builder().codecs(configurer -> {
 
-                    ObjectMapper mapper = new ObjectMapper();
-                    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                    configurer.customCodecs().registerWithDefaultConfig(new Jackson2JsonDecoder(mapper, MediaType.TEXT_PLAIN));
-                }).build()).build()
-                .post()
-                .uri("https://api.weixin.qq.com/wxa/msg_sec_check?access_token={accessToken}", accessToken)
-                .bodyValue(dto)
-                .retrieve()
-                .bodyToMono(MsgSecCheckDTO.class)
-                .timeout(Duration.ofSeconds(20));
-        });
+                        ObjectMapper mapper = new ObjectMapper();
+                        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                        configurer.customCodecs().registerWithDefaultConfig(new Jackson2JsonDecoder(mapper, MediaType.TEXT_PLAIN));
+                    }).build()).build()
+                    .post()
+                    .uri("https://api.weixin.qq.com/wxa/msg_sec_check?access_token={accessToken}", tup.getT2())
+                    .bodyValue(dto)
+                    .retrieve()
+                    .bodyToMono(MsgSecCheckDTO.class)
+                    .timeout(Duration.ofSeconds(20));
+            });
     }
 }
