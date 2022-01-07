@@ -53,13 +53,13 @@ public class MsgSecCheck {
      * <p>获取检查一段文本是否含有违法违规内容结果。
      *
      * @param content 需检测的文本内容
-     * @return 检查一段文本是否含有违法违规内容DTO
+     * @return 检查一段文本是否含有违法违规内容响应DTO
      */
-    public Mono<MsgSecCheckDTO> get(String content) {
+    public Mono<MsgSecCheckResponseDTO> get(String content) {
 
         if (!StringUtils.equals("prod", activeProfile)) {
 
-            MsgSecCheckDTO dto = new MsgSecCheckDTO();
+            MsgSecCheckResponseDTO dto = new MsgSecCheckResponseDTO();
             dto.setErrcode("0");
 
             return Mono.just(dto);
@@ -71,7 +71,7 @@ public class MsgSecCheck {
                 Tuples::of)
             .flatMap(tup -> {
 
-                MsgSecCheckDTO dto = new MsgSecCheckDTO();
+                MsgSecCheckRequestDTO dto = new MsgSecCheckRequestDTO();
                 dto.setVersion(2);
                 dto.setOpenid(tup.getT1());
                 dto.setScene(3);
@@ -85,9 +85,9 @@ public class MsgSecCheck {
                     }).build()).build()
                     .post()
                     .uri("https://api.weixin.qq.com/wxa/msg_sec_check?access_token={accessToken}", tup.getT2())
-                    .body(Mono.just(dto), MsgSecCheckDTO.class)
+                    .body(Mono.just(dto), MsgSecCheckRequestDTO.class)
                     .retrieve()
-                    .bodyToMono(MsgSecCheckDTO.class)
+                    .bodyToMono(MsgSecCheckResponseDTO.class)
                     .timeout(Duration.ofSeconds(20));
             });
     }
