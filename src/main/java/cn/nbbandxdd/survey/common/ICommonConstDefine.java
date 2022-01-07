@@ -117,11 +117,6 @@ public interface ICommonConstDefine {
     };
 
     /**
-     * <p>选项类型：默认。
-     */
-    String ANSW_TYP_CD_DEFAULT = "0";
-
-    /**
      * <p>所有人，可用于问卷、题目、选项等数据表的LAST_MANT_USR字段。
      * 所有用户都可以访问被“标记”为everyone的记录。
      */
@@ -147,10 +142,6 @@ public interface ICommonConstDefine {
      * <p>错误码：参数校验失败。用于请求报文参数校验失败相关情形。
      */
     String SYS_ERROR_PARAM_NOT_VALID_COD = "2001";
-    /**
-     * <p>错误信息：参数校验失败。用于请求报文参数校验失败相关情形。
-     */
-    String SYS_ERROR_PARAM_NOT_VALID_MSG = "参数校验失败。";
     /**
      * <p>错误码：系统错误。用于表示原因不明的错误，需要通过日志进行排查。
      */

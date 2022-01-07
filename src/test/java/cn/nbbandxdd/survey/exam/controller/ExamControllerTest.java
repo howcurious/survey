@@ -1,5 +1,6 @@
 package cn.nbbandxdd.survey.exam.controller;
 
+import cn.nbbandxdd.survey.common.ICommonConstDefine;
 import cn.nbbandxdd.survey.exam.controller.vo.ExamInsertVO;
 import cn.nbbandxdd.survey.exam.controller.vo.ExamQuesRlnVO;
 import cn.nbbandxdd.survey.exam.controller.vo.ExamQuesTypRlnVO;
@@ -49,11 +50,24 @@ class ExamControllerTest {
         {
             // /exam/insert
             ExamInsertVO voi = new ExamInsertVO();
-            voi.setTtl("testexamX");
+
             voi.setDsc("testdscX");
             voi.setRpetInd("0");
             voi.setBgnTime(1640966400000L);
             voi.setEndTime(4070880000000L);
+
+            webTestClient
+                .post()
+                .uri("/exam/insert")
+                .header("authorization", "Bearer " + Objects.requireNonNull(loginVO).getToken())
+                .body(Mono.just(voi), ExamInsertVO.class)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                    .jsonPath("$.errCode").isEqualTo(ICommonConstDefine.SYS_ERROR_PARAM_NOT_VALID_COD)
+                    .jsonPath("$.errMsg").isNotEmpty();
+
+            voi.setTtl("testexamX");
 
             ExamVO examVO = webTestClient
                 .post()

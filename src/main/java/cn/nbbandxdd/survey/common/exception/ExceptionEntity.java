@@ -1,5 +1,6 @@
 package cn.nbbandxdd.survey.common.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -8,6 +9,7 @@ import lombok.Data;
  * @author howcurious
  */
 @Data
+@AllArgsConstructor
 public class ExceptionEntity {
 
     /**
