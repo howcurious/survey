@@ -129,7 +129,7 @@ public class ExamController {
                     dummy))
             .filterWhen(tup -> msgSecCheck.get(StringUtils.joinWith("。", tup.getT1().getTtl(), tup.getT1().getDsc())).map(dto -> {
 
-                boolean valid = StringUtils.equals(dto.getErrcode(), ICommonConstDefine.WECHAT_ERRCODE_SUCCESS);
+                boolean valid = dto.getErrcode() == null || StringUtils.equals(dto.getErrcode(), ICommonConstDefine.WECHAT_ERRCODE_SUCCESS);
                 if (!valid) {
 
                     log.error("问卷内容检测失败，{}：{}。", dto.getErrcode(), dto.getErrMsg());
@@ -184,7 +184,7 @@ public class ExamController {
             .map(one -> ModelMapper.map(one, ExamEntity.class))
             .filterWhen(one -> msgSecCheck.get(StringUtils.joinWith("。", one.getTtl(), one.getDsc())).map(dto -> {
 
-                boolean valid = StringUtils.equals(dto.getErrcode(), ICommonConstDefine.WECHAT_ERRCODE_SUCCESS);
+                boolean valid = dto.getErrcode() == null || StringUtils.equals(dto.getErrcode(), ICommonConstDefine.WECHAT_ERRCODE_SUCCESS);
                 if (!valid) {
 
                     log.error("问卷内容检测失败，{}：{}。", dto.getErrcode(), dto.getErrMsg());

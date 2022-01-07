@@ -85,7 +85,7 @@ public class MsgSecCheck {
                     }).build()).build()
                     .post()
                     .uri("https://api.weixin.qq.com/wxa/msg_sec_check?access_token={accessToken}", tup.getT2())
-                    .bodyValue(dto)
+                    .body(Mono.just(dto), MsgSecCheckDTO.class)
                     .retrieve()
                     .bodyToMono(MsgSecCheckDTO.class)
                     .timeout(Duration.ofSeconds(20));

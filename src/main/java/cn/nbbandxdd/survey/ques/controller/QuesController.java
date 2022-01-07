@@ -96,7 +96,7 @@ public class QuesController {
                     StringUtils.joinWith("。", tup.getT2().stream().map(AnswEntity::getDsc).collect(Collectors.toList()))))
                 .map(dto -> {
 
-                    boolean valid = StringUtils.equals(dto.getErrcode(), ICommonConstDefine.WECHAT_ERRCODE_SUCCESS);
+                    boolean valid = dto.getErrcode() == null || StringUtils.equals(dto.getErrcode(), ICommonConstDefine.WECHAT_ERRCODE_SUCCESS);
                     if (!valid) {
 
                         log.error("问卷内容检测失败，{}：{}。", dto.getErrcode(), dto.getErrMsg());
@@ -139,7 +139,7 @@ public class QuesController {
                     StringUtils.joinWith("。", tup.getT2().stream().map(AnswEntity::getDsc).collect(Collectors.toList()))))
                 .map(dto -> {
 
-                    boolean valid = StringUtils.equals(dto.getErrcode(), ICommonConstDefine.WECHAT_ERRCODE_SUCCESS);
+                    boolean valid = dto.getErrcode() == null || StringUtils.equals(dto.getErrcode(), ICommonConstDefine.WECHAT_ERRCODE_SUCCESS);
                     if (!valid) {
 
                         log.error("问卷内容检测失败，{}：{}。", dto.getErrcode(), dto.getErrMsg());
