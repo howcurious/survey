@@ -79,9 +79,23 @@ public class QuesService {
     public Mono<QuesEntity> insert(Mono<Tuple2<QuesEntity, List<AnswEntity>>> entity) {
 
         return entity
-            .filter(tup -> ICommonConstDefine.QUES_TYP_CD_SET.contains(tup.getT1().getTypCd()) &&
-                StringUtils.isNotBlank(tup.getT1().getDsc()) &&
-                !tup.getT2().isEmpty())
+            .flatMap(tup -> {
+
+                if (!ICommonConstDefine.QUES_TYP_CD_SET.contains(tup.getT1().getTypCd())) {
+
+                    return Mono.error(new SurveyValidationException("题目类型错误。"));
+                }
+                if (StringUtils.isBlank(tup.getT1().getDsc())) {
+
+                    return Mono.error(new SurveyValidationException("请填写题目描述。"));
+                }
+                if (tup.getT2().isEmpty()) {
+
+                    return Mono.error(new SurveyValidationException("选项不能为空。"));
+                }
+
+                return Mono.just(tup);
+            })
             .flatMap(tup -> Mono.deferContextual(ctx -> {
 
                 tup.getT1().setLastMantUsr(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));
@@ -116,8 +130,19 @@ public class QuesService {
                 return tup;
             })
             .flatMap(tup -> Flux.fromIterable(tup.getT2())
-                .filter(one -> StringUtils.isNotBlank(one.getDsc()) &&
-                    one.getScre() != null && 0 <= one.getScre() && one.getScre() <= 100)
+                .flatMap(one -> {
+
+                    if (StringUtils.isBlank(one.getDsc())) {
+
+                        return Mono.error(new SurveyValidationException("请填写选项描述。"));
+                    }
+                    if (one.getScre() == null || one.getScre() < 0 || 100 < one.getScre()) {
+
+                        return Mono.error(new SurveyValidationException("选项分值区间为[0,100]。"));
+                    }
+
+                    return Mono.just(one);
+                })
                 .flatMap(one -> Mono.deferContextual(ctx -> {
 
                     one.setQuesCd(tup.getT1().getQuesCd());
@@ -147,7 +172,15 @@ public class QuesService {
     public Mono<Void> delete(Mono<QuesEntity> entity) {
 
         return entity
-            .filter(one -> StringUtils.isNotBlank(one.getQuesCd()))
+            .flatMap(one -> {
+
+                if (StringUtils.isBlank(one.getQuesCd())) {
+
+                    return Mono.error(new SurveyValidationException("题目编号不能为空。"));
+                }
+
+                return Mono.just(one);
+            })
             .flatMap(one -> Mono.deferContextual(ctx -> {
 
                 one.setLastMantUsr(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));
@@ -168,10 +201,27 @@ public class QuesService {
     public Mono<Void> update(Mono<Tuple2<QuesEntity, List<AnswEntity>>> entity) {
 
         return entity
-            .filter(tup -> StringUtils.isNotBlank(tup.getT1().getQuesCd()) &&
-                ICommonConstDefine.QUES_TYP_CD_SET.contains(tup.getT1().getTypCd()) &&
-                StringUtils.isNotBlank(tup.getT1().getDsc()) &&
-                !tup.getT2().isEmpty())
+            .flatMap(tup -> {
+
+                if (StringUtils.isBlank(tup.getT1().getQuesCd())) {
+
+                    return Mono.error(new SurveyValidationException("题目编号不能为空。"));
+                }
+                if (!ICommonConstDefine.QUES_TYP_CD_SET.contains(tup.getT1().getTypCd())) {
+
+                    return Mono.error(new SurveyValidationException("题目类型错误。"));
+                }
+                if (StringUtils.isBlank(tup.getT1().getDsc())) {
+
+                    return Mono.error(new SurveyValidationException("请填写题目描述。"));
+                }
+                if (tup.getT2().isEmpty()) {
+
+                    return Mono.error(new SurveyValidationException("选项不能为空。"));
+                }
+
+                return Mono.just(tup);
+            })
             .flatMap(tup -> Mono.deferContextual(ctx -> {
 
                 tup.getT1().setLastMantUsr(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));
@@ -198,8 +248,19 @@ public class QuesService {
                 return tup;
             })
             .flatMap(tup -> Flux.fromIterable(tup.getT2())
-                .filter(one -> StringUtils.isNotBlank(one.getDsc()) &&
-                        one.getScre() != null && 0 <= one.getScre() && one.getScre() <= 100)
+                .flatMap(one -> {
+
+                    if (StringUtils.isBlank(one.getDsc())) {
+
+                        return Mono.error(new SurveyValidationException("请填写选项描述。"));
+                    }
+                    if (one.getScre() == null || one.getScre() < 0 || 100 < one.getScre()) {
+
+                        return Mono.error(new SurveyValidationException("选项分值区间为[0,100]。"));
+                    }
+
+                    return Mono.just(one);
+                })
                 .flatMap(one -> Mono.deferContextual(ctx -> {
 
                     one.setQuesCd(tup.getT1().getQuesCd());
@@ -273,15 +334,29 @@ public class QuesService {
     public Flux<Tuple3<QuesEntity, List<AnswEntity>, List<String>>> findByExp(Mono<ExamEntity> entity, Integer pageNum, Integer pageSize) {
 
         return entity
-            .filter(one -> StringUtils.isNotBlank(one.getExamCd()))
+            .flatMap(one -> {
+
+                if (StringUtils.isBlank(one.getExamCd())) {
+
+                    return Mono.error(new SurveyValidationException("问卷编号不能为空。"));
+                }
+
+                return Mono.just(one);
+            })
             .flatMap(one -> Mono.deferContextual(ctx -> {
 
                 one.setLastMantUsr(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));
                 return Mono.just(one);
             }))
-            .filterWhen(one -> respRecRepository.findByOpenIdAndExamCd(one.getLastMantUsr(), one.getExamCd()).map(en -> true).switchIfEmpty(Mono.just(false)))
-            .filterWhen(one -> examRepository.findById(one.getExamCd()).map(en -> StringUtils.equals(en.getAnswImmInd(), ICommonConstDefine.COMMON_IND_YES) || LocalDateTime.now().isAfter(en.getEndTime()))
-                .switchIfEmpty(Mono.just(false)))
+            .flatMap(one -> respRecRepository.findByOpenIdAndExamCd(one.getLastMantUsr(), one.getExamCd()).map(en -> one).switchIfEmpty(Mono.error(new SurveyValidationException("问卷尚未作答。"))))
+            .flatMap(one -> examRepository.findById(one.getExamCd()).flatMap(en -> {
+
+                    if (StringUtils.equals(en.getAnswImmInd(), ICommonConstDefine.COMMON_IND_NO) && LocalDateTime.now().isBefore(en.getEndTime())) {
+
+                        return Mono.error(new SurveyValidationException("问卷答案尚不可见。"));
+                    }
+                    return Mono.just(one);
+                }))
             .flatMapMany(one -> quesRepository.findByExamCd(one.getExamCd(), pageSize, (pageNum - 1) * pageSize)
                 .flatMap(q -> {
 

@@ -68,10 +68,21 @@ public class UsrInfoService {
     public Mono<Void> insert(Mono<UsrInfoEntity> entity) {
 
         return entity
-            .filter(one -> StringUtils.isNotBlank(one.getDprtNam()) &&
-                StringUtils.isNotBlank(one.getGrpNam()))
-            .filterWhen(one -> grpInfoRepository.findByDprtNamAndGrpNam(one.getDprtNam(), one.getGrpNam())
-                .map(en -> true).defaultIfEmpty(false))
+            .flatMap(one -> {
+
+                if (StringUtils.isBlank(one.getDprtNam())) {
+
+                    return Mono.error(new SurveyValidationException("请选择部门。"));
+                }
+                if (StringUtils.isBlank(one.getGrpNam())) {
+
+                    return Mono.error(new SurveyValidationException("请选择分组。"));
+                }
+
+                return Mono.just(one);
+            })
+            .flatMap(one -> grpInfoRepository.findByDprtNamAndGrpNam(one.getDprtNam(), one.getGrpNam())
+                .map(en -> one).switchIfEmpty(Mono.error(new SurveyValidationException("部门或分组错误。"))))
             .flatMap(one -> Mono.deferContextual(ctx -> {
 
                 one.setOpenId(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));
@@ -100,10 +111,21 @@ public class UsrInfoService {
     public Mono<Void> update(Mono<UsrInfoEntity> entity) {
 
         return entity
-            .filter(one -> StringUtils.isNotBlank(one.getDprtNam()) &&
-                StringUtils.isNotBlank(one.getGrpNam()))
-            .filterWhen(one -> grpInfoRepository.findByDprtNamAndGrpNam(one.getDprtNam(), one.getGrpNam())
-                .map(en -> true).defaultIfEmpty(false))
+            .flatMap(one -> {
+
+                if (StringUtils.isBlank(one.getDprtNam())) {
+
+                    return Mono.error(new SurveyValidationException("请选择部门。"));
+                }
+                if (StringUtils.isBlank(one.getGrpNam())) {
+
+                    return Mono.error(new SurveyValidationException("请选择分组。"));
+                }
+
+                return Mono.just(one);
+            })
+            .flatMap(one -> grpInfoRepository.findByDprtNamAndGrpNam(one.getDprtNam(), one.getGrpNam())
+                .map(en -> one).switchIfEmpty(Mono.error(new SurveyValidationException("部门或分组错误。"))))
             .flatMap(one -> Mono.deferContextual(ctx -> {
 
                 one.setOpenId(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));

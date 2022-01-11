@@ -256,6 +256,15 @@ public class ExamService {
     public Mono<Void> delete(Mono<ExamEntity> entity) {
 
         return entity
+            .flatMap(one -> {
+
+                if (StringUtils.isBlank(one.getExamCd())) {
+
+                    return Mono.error(new SurveyValidationException("问卷编号不能为空。"));
+                }
+
+                return Mono.just(one);
+            })
             .flatMap(one -> Mono.deferContextual(ctx -> {
 
                 one.setLastMantUsr(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));
@@ -279,11 +288,31 @@ public class ExamService {
     public Mono<Void> update(Mono<ExamEntity> entity) {
 
         return entity
-            .filter(one -> StringUtils.isNotBlank(one.getExamCd()) &&
-                ICommonConstDefine.COMMON_IND_SET.contains(one.getRpetInd()) &&
-                (StringUtils.isBlank(one.getCntdwnInd()) || ICommonConstDefine.COMMON_IND_SET.contains(one.getCntdwnInd())) &&
-                (StringUtils.isBlank(one.getAnswImmInd()) || ICommonConstDefine.COMMON_IND_SET.contains(one.getAnswImmInd())) &&
-                StringUtils.isNotBlank(one.getTtl()))
+            .flatMap(one -> {
+
+                if (StringUtils.isBlank(one.getExamCd())) {
+
+                    return Mono.error(new SurveyValidationException("问卷编号不能为空。"));
+                }
+                if (!ICommonConstDefine.COMMON_IND_SET.contains(one.getRpetInd())) {
+
+                    return Mono.error(new SurveyValidationException("请选择是否可重复作答。"));
+                }
+                if (StringUtils.isNotBlank(one.getCntdwnInd()) && !ICommonConstDefine.COMMON_IND_SET.contains(one.getCntdwnInd())) {
+
+                    return Mono.error(new SurveyValidationException("请选择是否对每道题进行一分钟倒计时。"));
+                }
+                if (StringUtils.isNotBlank(one.getAnswImmInd()) && !ICommonConstDefine.COMMON_IND_SET.contains(one.getAnswImmInd())) {
+
+                    return Mono.error(new SurveyValidationException("请选择是否在作答后立刻显示正确答案。"));
+                }
+                if (StringUtils.isBlank(one.getTtl())) {
+
+                    return Mono.error(new SurveyValidationException("请填写问卷题目。"));
+                }
+
+                return Mono.just(one);
+            })
             .flatMap(one -> Mono.deferContextual(ctx -> {
 
                 one.setLastMantUsr(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));
