@@ -24,7 +24,7 @@ public interface ExamQuesTypRlnRepository extends ReactiveCrudRepository<ExamQue
      * <p>新增问卷与题目类型间关系。
      *
      * @param entity 问卷与题目类型间关系Entity
-     * @return 无
+     * @return 影响行数
      */
     @Modifying
     @Query("INSERT INTO EXAM_QUES_TYP_RLN (EXAM_CD, QUES_TYP_CD, SCRE, CNT, LAST_MANT_USR, LAST_MANT_DAT, LAST_MANT_TMSTP) " +
@@ -36,7 +36,7 @@ public interface ExamQuesTypRlnRepository extends ReactiveCrudRepository<ExamQue
      *
      * @param examCd 问卷编号
      * @param lastMantUsr 最后维护用户
-     * @return 无
+     * @return 影响行数
      */
     @Modifying
     @Query("DELETE FROM EXAM_QUES_TYP_RLN WHERE EXAM_CD = :examCd AND LAST_MANT_USR = :lastMantUsr")

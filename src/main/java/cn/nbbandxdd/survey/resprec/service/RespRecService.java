@@ -33,7 +33,13 @@ import java.util.stream.Collectors;
 /**
  * <p>作答记录Service。
  *
- *
+ * <ul>
+ * <li>新增作答明细，对外服务接口，使用{@link #insertDtl(Mono)}。</li>
+ * <li>查询作答记录，对外服务接口，使用{@link #findRespList(Integer, Integer)}。</li>
+ * <li>查询作答排名，对外服务接口，使用{@link #findUsrRank(Mono, Integer, Integer)}。</li>
+ * <li>查询作答统计（按分组），对外服务接口，使用{@link #findGrpStat(Mono)}。</li>
+ * <li>查询作答统计（按问卷），对外服务接口，使用{@link #findExamStat(Mono)}。</li>
+ * </ul>
  *
  * @author howcurious
  */

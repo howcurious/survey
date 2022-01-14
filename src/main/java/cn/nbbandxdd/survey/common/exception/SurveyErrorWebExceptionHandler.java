@@ -51,7 +51,18 @@ public class SurveyErrorWebExceptionHandler implements ErrorWebExceptionHandler 
 
         DataBufferFactory factory = exchange.getResponse().bufferFactory();
         DataBuffer buffer;
-        if (ex instanceof SurveyValidationException) {
+        if (ex instanceof SurveyTokenException) {
+
+            exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
+
+            try {
+
+                buffer = factory.wrap(objectMapper.writeValueAsBytes(new ExceptionEntity(ICommonConstDefine.SYS_ERROR_JWT_NOT_VALID_COD, ICommonConstDefine.SYS_ERROR_JWT_NOT_VALID_MSG)));
+            } catch (JsonProcessingException e) {
+
+                buffer = factory.wrap("SurveyTokenException".getBytes());
+            }
+        } else if (ex instanceof SurveyValidationException) {
 
             exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
 

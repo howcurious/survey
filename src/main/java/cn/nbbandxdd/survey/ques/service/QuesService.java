@@ -26,7 +26,16 @@ import java.util.List;
 /**
  * <p>题目Service。
  *
- *
+ * <ul>
+ * <li>新增题目，对外服务接口，使用{@link #insert(Mono)}。</li>
+ * <li>删除题目，对外服务接口，使用{@link #delete(Mono)}。</li>
+ * <li>修改题目，对外服务接口，使用{@link #update(Mono)}。</li>
+ * <li>查看题目详情（出题者视角），对外服务接口，使用{@link #findByPron(Mono)}。</li>
+ * <li>查看题目详情（答题者视角），对外服务接口，使用{@link #findByResp(Mono)}。</li>
+ * <li>查看题目详情（回看者视角），对外服务接口，使用{@link #findByExp(Mono, Integer, Integer)}。</li>
+ * <li>查看题目列表，对外服务接口，使用{@link #findList(Integer, Integer)}。</li>
+ * <li>查看公共题目列表，对外服务接口，使用{@link #findCommonList(Integer, Integer)}。</li>
+ * </ul>
  *
  * @author howcurious
  */

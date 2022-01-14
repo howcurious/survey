@@ -12,25 +12,71 @@ import reactor.core.publisher.Mono;
 /**
  * <p>作答记录Repository。
  *
+ * <ul>
+ * <li>新增作答记录，使用{@link #insert(RespRecEntity)}。</li>
+ * <li>依据OpenId{@code openId}和问卷编号{@code examCd}删除记录，使用{@link #deleteByOpenIdAndExamCd(String, String)}。</li>
+ * <li>依据问卷编号{@code examCd}和最后维护用户{@code lastMantUsr}删除记录，使用{@link #deleteByExamCdAndLastMantUsr(String, String)}。</li>
+ * <li>依据OpenId{@code openId}和问卷编号{@code examCd}查询记录，使用{@link #findByOpenIdAndExamCd(String, String)}。</li>
+ * <li>依据OpenId{@code openId}分页查询记录列表，使用{@link #findListByOpenId(String, Integer, Integer)}。</li>
+ * <li>依据问卷编号{@code examCd}和最后维护用户{@code lastMantUsr}分页查询排名，使用{@link #findRankByExamCdAndLastMantUsr(String, String, Integer, Integer)}。</li>
+ * <li>依据问卷编号{@code examCd}和部门名{@code dprtNam}查询按分组统计信息，使用{@link #findGrpStatByExamCdAndDprtNam(String, String)}。</li>
+ * <li>依据问卷编号{@code examCd}查询按问卷统计信息，使用{@link #findExamStatByExamCd(String)}。</li>
+ * </ul>
+ *
  * @author howcurious
  */
 public interface RespRecRepository extends ReactiveCrudRepository<RespRecEntity, String> {
 
+    /**
+     * <p>新增作答记录。
+     *
+     * @param entity 作答记录Entity
+     * @return 影响行数
+     */
     @Modifying
     @Query("INSERT INTO RESP_REC (OPEN_ID, EXAM_CD, SCRE, SPND, DAT) VALUES (:#{#entity.openId}, :#{#entity.examCd}, :#{#entity.scre}, :#{#entity.spnd}, :#{#entity.dat})")
     Mono<Integer> insert(RespRecEntity entity);
 
+    /**
+     * <p>依据OpenId{@code openId}和问卷编号{@code examCd}删除记录。
+     *
+     * @param openId OpenId
+     * @param examCd 问卷编号
+     * @return 影响行数
+     */
     @Modifying
     @Query("DELETE FROM RESP_REC WHERE OPEN_ID = :openId AND EXAM_CD = :examCd")
     Mono<Integer> deleteByOpenIdAndExamCd(String openId, String examCd);
 
+    /**
+     * <p>依据问卷编号{@code examCd}和最后维护用户{@code lastMantUsr}删除记录。
+     *
+     * @param examCd 问卷编号
+     * @param lastMantUsr 最后维护用户
+     * @return 影响行数
+     */
     @Modifying
     @Query("DELETE FROM RESP_REC REC WHERE EXISTS (SELECT 1 FROM EXAM WHERE REC.EXAM_CD = EXAM.EXAM_CD AND EXAM.EXAM_CD = :examCd AND EXAM.LAST_MANT_USR = :lastMantUsr)")
     Mono<Integer> deleteByExamCdAndLastMantUsr(String examCd, String lastMantUsr);
 
+    /**
+     * <p>依据OpenId{@code openId}和问卷编号{@code examCd}查询记录。
+     *
+     * @param openId OpenId
+     * @param examCd 问卷编号
+     * @return 作答记录Entity
+     */
     @Query("SELECT * FROM RESP_REC WHERE OPEN_ID = :openId AND EXAM_CD = :examCd")
     Mono<RespRecEntity> findByOpenIdAndExamCd(String openId, String examCd);
 
+    /**
+     * <p>依据OpenId{@code openId}分页查询记录列表。
+     *
+     * @param openId OpenId
+     * @param limit limit
+     * @param offset offset
+     * @return 作答记录Entity列表
+     */
     @Query("(" +
         "SELECT OPEN_ID, EXAM_CD, SCRE, SPND, DAT " +
         "FROM RESP_REC REC " +
@@ -53,6 +99,15 @@ public interface RespRecRepository extends ReactiveCrudRepository<RespRecEntity,
         "ORDER BY DAT DESC, EXAM_CD DESC LIMIT :limit OFFSET :offset")
     Flux<RespRecEntity> findListByOpenId(String openId, Integer limit, Integer offset);
 
+    /**
+     * <p>依据问卷编号{@code examCd}和最后维护用户{@code lastMantUsr}分页查询排名。
+     *
+     * @param examCd 问卷编号
+     * @param lastMantUsr 最后维护用户
+     * @param limit limit
+     * @param offset offset
+     * @return 作答记录Entity列表
+     */
     @Query("SELECT OPEN_ID, EXAM_CD, SCRE, SPND, DAT " +
         "FROM RESP_REC REC " +
         "WHERE EXISTS (" +
@@ -64,6 +119,13 @@ public interface RespRecRepository extends ReactiveCrudRepository<RespRecEntity,
         "ORDER BY SCRE DESC, SPND LIMIT :limit OFFSET :offset")
     Flux<RespRecEntity> findRankByExamCdAndLastMantUsr(String examCd, String lastMantUsr, Integer limit, Integer offset);
 
+    /**
+     * <p>依据问卷编号{@code examCd}和部门名{@code dprtNam}查询按分组统计信息。
+     *
+     * @param examCd 问卷编号
+     * @param dprtNam 部门名
+     * @return 按分组作答统计Entity
+     */
     @Query("SELECT :examCd AS EXAM_CD, GRP.DPRT_NAM AS DPRT_NAM, GRP.GRP_NAM AS GRP_NAM, " +
             "IFNULL(RES.CNT, 0) AS CNT, " +
             "IFNULL(TOT.TOT_CNT, 0) AS TOT_CNT, " +
@@ -83,6 +145,12 @@ public interface RespRecRepository extends ReactiveCrudRepository<RespRecEntity,
         "ORDER BY GRP.SEQ_NO")
     Flux<GrpStatEntity> findGrpStatByExamCdAndDprtNam(String examCd, String dprtNam);
 
+    /**
+     * <p>依据问卷编号{@code examCd}查询按问卷统计信息。
+     *
+     * @param examCd 问卷编号
+     * @return 按问卷作答统计Entity
+     */
     @Query("SELECT REC.EXAM_CD AS EXAM_CD, EXAM.TTL AS TTL, " +
         "COUNT(1) AS CNT, AVG(SCRE) AS AVG_SCRE, AVG(SPND) AS AVG_SPND, " +
         "SUM(CASE WHEN SCRE BETWEEN 0 AND 40 THEN 1 ELSE 0 END) AS CNT_U40, " +

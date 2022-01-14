@@ -95,7 +95,7 @@ public class UsrInfoService {
                 return one;
             })
             .flatMap(usrInfoRepository::save)
-            .flatMap(one -> roleInfoRepository.save(one.getOpenId(), ICommonConstDefine.USER_EVERYONE))
+            .flatMap(one -> roleInfoRepository.insert(one.getOpenId(), ICommonConstDefine.USER_EVERYONE))
             .switchIfEmpty(Mono.error(
                 new SurveyValidationException("新增实名登记校验失败。")))
             .then();

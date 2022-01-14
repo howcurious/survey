@@ -10,6 +10,13 @@ import reactor.core.publisher.Mono;
 /**
  * <p>答案Repository。
  *
+ * <ul>
+ * <li>新增答案，使用{@link #insert(AnswEntity)}。</li>
+ * <li>依据题目编号{@code quesCd}和最后维护用户{@code lastMantUsr}删除记录，使用{@link #deleteByQuesCdAndLastMantUsr(String, String)}。</li>
+ * <li>依据题目编号{@code quesCd}查询记录列表，使用{@link #findByQuesCd(String)}。</li>
+ * <li>依据OpenId{@code openId}、问卷编号{@code examCd}和题目编号{@code quesCd}查询用户选择的答案编号，使用{@link #findSelByOpenIdAndExamCdAndQuesCd(String, String, String)}。</li>
+ * </ul>
+ *
  * @author howcurious
  */
 public interface AnswRepository extends ReactiveCrudRepository<AnswEntity, String> {
@@ -35,9 +42,23 @@ public interface AnswRepository extends ReactiveCrudRepository<AnswEntity, Strin
     @Query("DELETE FROM ANSW WHERE QUES_CD = :quesCd AND LAST_MANT_USR = :lastMantUsr")
     Mono<Integer> deleteByQuesCdAndLastMantUsr(String quesCd, String lastMantUsr);
 
+    /**
+     * <p>依据题目编号{@code quesCd}查询记录列表。
+     *
+     * @param quesCd 题目编号
+     * @return 答案Entity列表
+     */
     @Query("SELECT QUES_CD, ANSW_CD, TYP_CD, DSC, SCRE, LAST_MANT_USR, LAST_MANT_DAT, LAST_MANT_TMSTP FROM ANSW WHERE QUES_CD = :quesCd")
     Flux<AnswEntity> findByQuesCd(String quesCd);
 
+    /**
+     * <p>依据OpenId{@code openId}、问卷编号{@code examCd}和题目编号{@code quesCd}查询用户选择的答案编号。
+     *
+     * @param openId OpenId
+     * @param examCd 问卷编号
+     * @param quesCd 题目编号
+     * @return 用户选择的答案编号
+     */
     @Query("SELECT ANSW_CD FROM ANSW " +
         "WHERE QUES_CD = :quesCd AND (SELECT ANSW_CD FROM DTL_REC WHERE OPEN_ID = :openId AND EXAM_CD = :examCd and QUES_CD = :quesCd" +
         ") LIKE CONCAT('%', ANSW_CD, '%')")

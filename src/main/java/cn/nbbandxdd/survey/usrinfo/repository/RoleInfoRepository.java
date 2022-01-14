@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
  * <p>角色信息Repository。
  *
  * <ul>
- * <li>新增用户角色，使用{@link #save(String, String)}。</li>
+ * <li>新增用户角色，使用{@link #insert(String, String)}。</li>
  * </ul>
  *
  * @author howcurious
@@ -26,5 +26,5 @@ public interface RoleInfoRepository extends ReactiveCrudRepository<RoleInfoEntit
      */
     @Modifying
     @Query("INSERT INTO ROLE_INFO (OPEN_ID, ROLE_ID) VALUES (:openId, :roleId)")
-    Mono<RoleInfoEntity> save(String openId, String roleId);
+    Mono<RoleInfoEntity> insert(String openId, String roleId);
 }

@@ -31,7 +31,13 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 /**
  * <p>作答记录Controller。
  *
- *
+ * <ul>
+ * <li>新增作答明细，使用{@link #insertDtl(ServerRequest)}。</li>
+ * <li>查询作答记录，使用{@link #findRespList(ServerRequest)}。</li>
+ * <li>查询作答排名，使用{@link #findUsrRank(ServerRequest)}。</li>
+ * <li>查询作答统计（按分组），使用{@link #findGrpStat(ServerRequest)}。</li>
+ * <li>查询作答统计（按问卷），使用{@link #findExamStat(ServerRequest)}。</li>
+ * </ul>
  *
  * @author howcurious
  */
@@ -69,6 +75,25 @@ public class RespRecController {
 
     /**
      * <p>新增作答明细。
+     *
+     * <p>输入字段：
+     * <ul>
+     * <li>{@code examCd}：问卷编号（必输）。</li>
+     * <li>{@code quesCd}：题目编号（必输）。</li>
+     * <li>{@code answList}：答案列表（必输）：</li>
+     * <li> - {@code answCd}：答案编号（必输）。</li>
+     * <li>{@code lastInd}：最后一题标识（选输）。取值范围：0（默认）：否；1：是。</li>
+     * </ul>
+     *
+     * <p>输出字段：
+     * <ul>
+     * <li>{@code examCd}：问卷编号。</li>
+     * <li>{@code quesCd}：题目编号。</li>
+     * <li>{@code answList}：答案列表：</li>
+     * <li> - {@code answCd}：正确答案编号。</li>
+     * <li>{@code respScre}：问卷作答分数。</li>
+     * <li>{@code respSpnd}：问卷作答用时。</li>
+     * </ul>
      */
     public Mono<ServerResponse> insertDtl(ServerRequest request) {
 
@@ -97,6 +122,17 @@ public class RespRecController {
 
     /**
      * <p>查询作答记录。
+     *
+     * <p>输入字段：无。
+     *
+     * <p>输出字段：
+     * <ul>
+     * <li>{@code examCd}：问卷编号。</li>
+     * <li>{@code ttl}：标题。</li>
+     * <li>{@code scre}：分数。</li>
+     * <li>{@code spnd}：用时。</li>
+     * <li>{@code dat}：作答日期。</li>
+     * </ul>
      */
     public Mono<ServerResponse> findRespList(ServerRequest request) {
 
@@ -117,6 +153,22 @@ public class RespRecController {
 
     /**
      * <p>查询作答排名。
+     *
+     * <p>输入字段：无。
+     * <ul>
+     * <li>{@code examCd}：问卷编号（必输）。</li>
+     * </ul>
+     *
+     * <p>输出字段：
+     * <ul>
+     * <li>{@code examCd}：问卷编号。</li>
+     * <li>{@code dprtNam}：部门名。</li>
+     * <li>{@code grpNam}：分组名。</li>
+     * <li>{@code usrNam}：用户名。</li>
+     * <li>{@code scre}：分数。</li>
+     * <li>{@code spnd}：用时。</li>
+     * <li>{@code dat}：作答日期。</li>
+     * </ul>
      */
     public Mono<ServerResponse> findUsrRank(ServerRequest request) {
 
@@ -142,6 +194,23 @@ public class RespRecController {
 
     /**
      * <p>查询作答统计（按分组）。
+     *
+     * <p>输入字段：无。
+     * <ul>
+     * <li>{@code examCd}：问卷编号（必输）。</li>
+     * <li>{@code dprtNam}：部门名（选输）。默认值为用户所在部门名</li>
+     * </ul>
+     *
+     * <p>输出字段：
+     * <ul>
+     * <li>{@code dprtNam}：部门名。</li>
+     * <li>{@code grpNam}：分组名。</li>
+     * <li>{@code cnt}：参与人数。</li>
+     * <li>{@code totCnt}：总人数。</li>
+     * <li>{@code ptpnRate}：参与率。</li>
+     * <li>{@code avgScre}：平均分数。</li>
+     * <li>{@code avgSpnd}：平均用时。</li>
+     * </ul>
      */
     public Mono<ServerResponse> findGrpStat(ServerRequest request) {
 
@@ -153,6 +222,27 @@ public class RespRecController {
 
     /**
      * <p>查询作答统计（按问卷）。
+     *
+     * <p>输入字段：无。
+     * <ul>
+     * <li>{@code examCd}：问卷编号（必输）。</li>
+     * </ul>
+     *
+     * <p>输出字段：
+     * <ul>
+     * <li>{@code ttl}：标题。</li>
+     * <li>{@code avgScre}：平均分数。</li>
+     * <li>{@code avgSpnd}：平均用时。</li>
+     * <li>{@code cnt}：参与人数。</li>
+     * <li>{@code cntU40}：参与人数，分数区间[0, 40]。</li>
+     * <li>{@code rateU40}：分数占比，区间[0, 40]。</li>
+     * <li>{@code cntU70}：参与人数，分数区间[41, 70]。</li>
+     * <li>{@code rateU70}：分数占比，区间[40, 70]。</li>
+     * <li>{@code cntU100}：参与人数，分数区间[71, 100]。</li>
+     * <li>{@code rateU100}：分数占比，区间[71, 100]。</li>
+     * <li>{@code cnt100}：参与人数，分数100。</li>
+     * <li>{@code rate100}：分数占比，分数100。</li>
+     * </ul>
      */
     public Mono<ServerResponse> findExamStat(ServerRequest request) {
 

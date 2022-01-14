@@ -26,7 +26,7 @@ public interface ExamRepository extends ReactiveCrudRepository<ExamEntity, Strin
      *
      * @param examCd 问卷编号
      * @param lastMantUsr 最后维护用户
-     * @return 无
+     * @return 影响行数
      */
     @Modifying
     @Query("DELETE FROM EXAM WHERE EXAM_CD = :examCd AND LAST_MANT_USR = :lastMantUsr")
@@ -38,7 +38,7 @@ public interface ExamRepository extends ReactiveCrudRepository<ExamEntity, Strin
      * @param examCd 问卷编号
      * @param lastMantUsr 最后维护用户
      * @param seqNo 下一个题目序号
-     * @return 无
+     * @return 影响行数
      */
     @Modifying
     @Query("UPDATE EXAM SET SEQ_NO = SEQ_NO + :seqNo WHERE EXAM_CD = :examCd AND LAST_MANT_USR = :lastMantUsr")

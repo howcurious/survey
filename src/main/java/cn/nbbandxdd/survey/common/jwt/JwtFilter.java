@@ -1,9 +1,10 @@
 package cn.nbbandxdd.survey.common.jwt;
 
 import cn.nbbandxdd.survey.common.ICommonConstDefine;
+import cn.nbbandxdd.survey.common.exception.SurveyTokenException;
+import io.jsonwebtoken.JwtException;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -29,8 +30,7 @@ public class JwtFilter implements WebFilter {
 
     /**
      * <p>校验Jwt。
-     * 如果报文头authorization缺失或格式错误，则返回状态码{@code HttpStatus.BAD_REQUEST}；
-     * 如果Jwt校验失败，则返回状态码{@code HttpStatus.BAD_REQUEST}。
+     * 如果报文头authorization缺失或错误、Jwt校验失败，则抛出异常{@code SurveyTokenException}，
      */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -44,13 +44,18 @@ public class JwtFilter implements WebFilter {
             .flatMap(lis -> lis.stream().findFirst())
             .filter(authHeader -> StringUtils.startsWith(authHeader, "Bearer "))
             .map(authHeader -> RegExUtils.replaceFirst(authHeader, "^Bearer ", StringUtils.EMPTY))
-            .map(JwtUtils::fillbackOpenidFromToken)
+            .flatMap(token -> {
+
+                try {
+
+                    return Optional.of(JwtUtils.fillbackOpenidFromToken(token));
+                } catch (JwtException ex) {
+
+                    return Optional.empty();
+                }
+            })
             .map(openId -> chain.filter(exchange)
                 .contextWrite(ctx -> ctx.put(ICommonConstDefine.CONTEXT_KEY_OPEN_ID, openId)))
-            .orElseGet(() -> {
-
-                exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
-                return exchange.getResponse().writeWith(Mono.empty());
-            });
+            .orElse(Mono.error(new SurveyTokenException()));
     }
 }

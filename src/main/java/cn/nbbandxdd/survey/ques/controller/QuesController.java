@@ -33,7 +33,16 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 /**
  * <p>题目Controller。
  *
- *
+ * <ul>
+ * <li>新增题目，使用{@link #insert(ServerRequest)}。</li>
+ * <li>删除题目，使用{@link #delete(ServerRequest)}。</li>
+ * <li>修改题目，使用{@link #update(ServerRequest)}。</li>
+ * <li>查看题目详情（出题者视角），使用{@link #findByPron(ServerRequest)}。</li>
+ * <li>查看题目详情（答题者视角），使用{@link #findByResp(ServerRequest)}。</li>
+ * <li>查看题目详情（回看者视角），使用{@link #findByExp(ServerRequest)}。</li>
+ * <li>查看题目列表，使用{@link #findList(ServerRequest)}。</li>
+ * <li>查看公共题目列表，使用{@link #findCommonList(ServerRequest)}。</li>
+ * </ul>
  *
  * @author howcurious
  */
@@ -81,6 +90,21 @@ public class QuesController {
 
     /**
      * <p>新增题目。
+     *
+     * <p>输入字段：
+     * <ul>
+     * <li>{@code typCd}：题目类型（必输）。取值范围：1：单选；2：多选。</li>
+     * <li>{@code dsc}：描述（必输）。校验失败情形：空白字段。</li>
+     * <li>{@code comm}：题解（选输）。</li>
+     * <li>{@code answList}：答案列表（必输）：</li>
+     * <li> - {@code dsc}：描述（必输）。校验失败情形：空白字段。</li>
+     * <li> - {@code scre}：分数（必输）。取值范围：[0, 100]。</li>
+     * </ul>
+     *
+     * <p>输出字段：
+     * <ul>
+     * <li>{@code quesCd}：题目编号。</li>
+     * </ul>
      */
     public Mono<ServerResponse> insert(ServerRequest request) {
 
@@ -113,6 +137,13 @@ public class QuesController {
 
     /**
      * <p>删除题目。
+     *
+     * <p>输入字段：
+     * <ul>
+     * <li>{@code quesCd}：题目编号（必输）。</li>
+     * </ul>
+     *
+     * <p>输出字段：无。
      */
     public Mono<ServerResponse> delete(ServerRequest request) {
 
@@ -124,6 +155,19 @@ public class QuesController {
 
     /**
      * <p>修改题目。
+     *
+     * <p>输入字段：
+     * <ul>
+     * <li>{@code quesCd}：题目编号（必输）。</li>
+     * <li>{@code typCd}：题目类型（必输）。取值范围：1：单选；2：多选。</li>
+     * <li>{@code dsc}：描述（必输）。校验失败情形：空白字段。</li>
+     * <li>{@code comm}：题解（选输）。</li>
+     * <li>{@code answList}：答案列表（必输）：</li>
+     * <li> - {@code dsc}：描述（必输）。校验失败情形：空白字段。</li>
+     * <li> - {@code scre}：分数（必输）。取值范围：[0, 100]。</li>
+     * </ul>
+     *
+     * <p>输出字段：无。
      */
     public Mono<ServerResponse> update(ServerRequest request) {
 
@@ -153,6 +197,23 @@ public class QuesController {
 
     /**
      * <p>查看题目详情（出题者视角）。
+     *
+     * <p>输入字段：
+     * <ul>
+     * <li>{@code quesCd}：题目编号（必输）。</li>
+     * </ul>
+     *
+     * <p>输出字段：
+     * <ul>
+     * <li>{@code quesCd}：题目编号。</li>
+     * <li>{@code typCd}：题目类型。</li>
+     * <li>{@code dsc}：描述。</li>
+     * <li>{@code comm}：题解。</li>
+     * <li>{@code answList}：答案列表：</li>
+     * <li> - {@code answCd}：答案编号。</li>
+     * <li> - {@code dsc}：描述。</li>
+     * <li> - {@code scre}：分数。</li>
+     * </ul>
      */
     public Mono<ServerResponse> findByPron(ServerRequest request) {
 
@@ -173,6 +234,22 @@ public class QuesController {
 
     /**
      * <p>查看题目详情（答题者视角）。
+     *
+     * <p>输入字段：
+     * <ul>
+     * <li>{@code quesCd}：题目编号（必输）。</li>
+     * </ul>
+     *
+     * <p>输出字段：
+     * <ul>
+     * <li>{@code quesCd}：题目编号。</li>
+     * <li>{@code typCd}：题目类型。</li>
+     * <li>{@code dsc}：描述。</li>
+     * <li>{@code comm}：题解。</li>
+     * <li>{@code answList}：答案列表：</li>
+     * <li> - {@code answCd}：答案编号。</li>
+     * <li> - {@code dsc}：描述。</li>
+     * </ul>
      */
     public Mono<ServerResponse> findByResp(ServerRequest request) {
 
@@ -193,6 +270,24 @@ public class QuesController {
 
     /**
      * <p>查看题目详情（回看者视角）。
+     *
+     * <p>输入字段：
+     * <ul>
+     * <li>{@code examCd}：问卷编号（必输）。</li>
+     * </ul>
+     *
+     * <p>输出字段：
+     * <ul>
+     * <li>{@code quesCd}：题目编号。</li>
+     * <li>{@code typCd}：题目类型。</li>
+     * <li>{@code dsc}：描述。</li>
+     * <li>{@code comm}：题解。</li>
+     * <li>{@code answList}：答案列表：</li>
+     * <li> - {@code answCd}：答案编号。</li>
+     * <li> - {@code dsc}：描述。</li>
+     * <li> - {@code scre}：分数。</li>
+     * <li>{@code selList}：选择列表。</li>
+     * </ul>
      */
     public Mono<ServerResponse> findByExp(ServerRequest request) {
 
@@ -217,6 +312,15 @@ public class QuesController {
 
     /**
      * <p>查看题目列表。
+     *
+     * <p>输入字段：无。
+     *
+     * <p>输出字段：
+     * <ul>
+     * <li>{@code quesCd}：题目编号。</li>
+     * <li>{@code typCd}：题目类型。</li>
+     * <li>{@code dsc}：描述。</li>
+     * </ul>
      */
     public Mono<ServerResponse> findList(ServerRequest request) {
 
@@ -231,6 +335,15 @@ public class QuesController {
 
     /**
      * <p>查看公共题目列表。
+     *
+     * <p>输入字段：无。
+     *
+     * <p>输出字段：
+     * <ul>
+     * <li>{@code quesCd}：题目编号。</li>
+     * <li>{@code typCd}：题目类型。</li>
+     * <li>{@code dsc}：描述。</li>
+     * </ul>
      */
     public Mono<ServerResponse> findCommonList(ServerRequest request) {
 

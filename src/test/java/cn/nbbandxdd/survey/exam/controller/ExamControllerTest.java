@@ -49,6 +49,25 @@ class ExamControllerTest {
         // typCd = 1
         {
             // /exam/insert
+            webTestClient
+                .post()
+                .uri("/exam/insert")
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.errCode").isEqualTo(ICommonConstDefine.SYS_ERROR_JWT_NOT_VALID_COD)
+                .jsonPath("$.errMsg").isEqualTo(ICommonConstDefine.SYS_ERROR_JWT_NOT_VALID_MSG);
+
+            webTestClient
+                .post()
+                .uri("/exam/insert")
+                .header("authorization", "Bearer invalid bearer")
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.errCode").isEqualTo(ICommonConstDefine.SYS_ERROR_JWT_NOT_VALID_COD)
+                .jsonPath("$.errMsg").isEqualTo(ICommonConstDefine.SYS_ERROR_JWT_NOT_VALID_MSG);
+
             ExamInsertVO voi = new ExamInsertVO();
 
             voi.setDsc("testdscX");
