@@ -16,6 +16,11 @@ public interface ICommonConstDefine {
     String CONTEXT_KEY_OPEN_ID = "CONTEXT_KEY_OPEN_ID";
 
     /**
+     * <p>Redis键，access_token。
+     */
+    String REDIS_KEY_ACCESS_TOKEN = "RedisKeyAccessToken";
+
+    /**
      * <p>微信小程序错误码：请求成功。
      */
     String WECHAT_ERRCODE_SUCCESS = "0";

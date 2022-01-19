@@ -3,6 +3,9 @@ logging:
     root: DEBUG
 
 spring:
+  redis:
+    host: localhost
+    port: 6379
   r2dbc:
     url: r2dbc:h2:mem:///testdb?allowMultiQueries=true&serverTimezone=Asia%2FShanghai
     username:

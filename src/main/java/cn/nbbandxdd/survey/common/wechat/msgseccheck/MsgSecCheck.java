@@ -57,19 +57,19 @@ public class MsgSecCheck {
      */
     public Mono<MsgSecCheckResponseDTO> get(String content) {
 
-        if (!StringUtils.equals("prod", activeProfile)) {
-
-            MsgSecCheckResponseDTO dto = new MsgSecCheckResponseDTO();
-            dto.setErrcode("0");
-
-            return Mono.just(dto);
-        }
-
         return Mono
             .zip(Mono.deferContextual(ctx -> Mono.just(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID).toString())),
                 accessTokenGenerator.get(),
                 Tuples::of)
             .flatMap(tup -> {
+
+                if (!StringUtils.equals("prod", activeProfile)) {
+
+                    MsgSecCheckResponseDTO respDto = new MsgSecCheckResponseDTO();
+                    respDto.setErrcode(ICommonConstDefine.WECHAT_ERRCODE_SUCCESS);
+
+                    return Mono.just(respDto);
+                }
 
                 MsgSecCheckRequestDTO dto = new MsgSecCheckRequestDTO();
                 dto.setVersion(2);

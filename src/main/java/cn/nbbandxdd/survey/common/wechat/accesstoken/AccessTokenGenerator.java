@@ -1,12 +1,13 @@
 package cn.nbbandxdd.survey.common.wechat.accesstoken;
 
+import cn.nbbandxdd.survey.common.ICommonConstDefine;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.ReactiveRedisOperations;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.time.Duration;
+import reactor.core.scheduler.Schedulers;
 
 /**
  * <p>接口调用凭证生成器。
@@ -17,14 +18,55 @@ import java.time.Duration;
  *
  * @author howcurious
  */
+@Slf4j
 @Component
 public class AccessTokenGenerator {
 
     /**
-     * <p>激活配置，默认：dev。
+     * <p>获取小程序全局唯一后台接口调用凭据。
      */
-    @Value("${spring.profiles.active:dev}")
-    private String activeProfile;
+    private final GetAccessToken getAccessToken;
+
+    /**
+     * <p>reactiveRedisOperations。
+     */
+    private final ReactiveRedisOperations<String, String> reactiveRedisOperations;
+
+    /**
+     * <p>构造器。
+     *
+     * @param getAccessToken 获取小程序全局唯一后台接口调用凭据
+     * @param reactiveRedisOperations reactiveRedisOperations
+     */
+    public AccessTokenGenerator(GetAccessToken getAccessToken, ReactiveRedisOperations<String, String> reactiveRedisOperations) {
+
+        this.getAccessToken = getAccessToken;
+        this.reactiveRedisOperations = reactiveRedisOperations;
+    }
+
+    /**
+     * <p>设置接口调用凭证。
+     */
+    @Scheduled(fixedDelay = 1800000L)
+    public void set() {
+
+        getAccessToken.get().flatMap(dto -> {
+
+            if (dto.getErrcode() != null && !StringUtils.equals(dto.getErrcode(), ICommonConstDefine.WECHAT_ERRCODE_SUCCESS)) {
+
+                log.error("获取微信接口校验凭证失败，{}：{}。", dto.getErrcode(), dto.getErrmsg());
+            }
+
+            if (StringUtils.isNotBlank(dto.getAccess_token())) {
+
+                return reactiveRedisOperations.opsForValue().set(ICommonConstDefine.REDIS_KEY_ACCESS_TOKEN, dto.getAccess_token());
+            }
+
+            return Mono.empty();
+        })
+        .subscribeOn(Schedulers.immediate())
+        .subscribe();
+    }
 
     /**
      * <p>获取接口调用凭证。
@@ -33,16 +75,6 @@ public class AccessTokenGenerator {
      */
     public Mono<String> get() {
 
-        if (!StringUtils.equals("prod", activeProfile)) {
-
-            return Mono.just(StringUtils.EMPTY);
-        }
-
-        return WebClient.create()
-            .get()
-            .uri("http://accesstoken:8080/accesstoken/accesstoken/get")
-            .retrieve()
-            .bodyToMono(String.class)
-            .timeout(Duration.ofSeconds(20));
+        return reactiveRedisOperations.opsForValue().get(ICommonConstDefine.REDIS_KEY_ACCESS_TOKEN);
     }
 }
