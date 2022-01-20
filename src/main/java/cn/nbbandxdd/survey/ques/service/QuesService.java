@@ -98,9 +98,14 @@ public class QuesService {
 
                     return Mono.error(new SurveyValidationException("请填写题目描述。"));
                 }
-                if (tup.getT2().isEmpty()) {
+                if ((StringUtils.equals(tup.getT1().getTypCd(), ICommonConstDefine.QUES_TYP_CD_SINGLE_CHOICE) || StringUtils.equals(tup.getT1().getTypCd(), ICommonConstDefine.QUES_TYP_CD_MULTIPLE_CHOICE)) &&
+                    tup.getT2().isEmpty()) {
 
-                    return Mono.error(new SurveyValidationException("选项不能为空。"));
+                    return Mono.error(new SurveyValidationException("选择题选项不能为空。"));
+                }
+                if (StringUtils.equals(tup.getT1().getTypCd(), ICommonConstDefine.QUES_TYP_CD_SHORT_ANSWER) && !tup.getT2().isEmpty()) {
+
+                    return Mono.error(new SurveyValidationException("简答题选项只能为空。"));
                 }
 
                 return Mono.just(tup);
@@ -128,7 +133,6 @@ public class QuesService {
                     return tup;
                 }))
             .flatMap(tup -> quesRepository.save(tup.getT1()).map(one -> tup))
-            .switchIfEmpty(Mono.error(new SurveyValidationException("新增题目校验失败。")))
             .map(tup -> {
 
                 int idx = 0;
@@ -224,9 +228,14 @@ public class QuesService {
 
                     return Mono.error(new SurveyValidationException("请填写题目描述。"));
                 }
-                if (tup.getT2().isEmpty()) {
+                if ((StringUtils.equals(tup.getT1().getTypCd(), ICommonConstDefine.QUES_TYP_CD_SINGLE_CHOICE) || StringUtils.equals(tup.getT1().getTypCd(), ICommonConstDefine.QUES_TYP_CD_MULTIPLE_CHOICE)) &&
+                    tup.getT2().isEmpty()) {
 
-                    return Mono.error(new SurveyValidationException("选项不能为空。"));
+                    return Mono.error(new SurveyValidationException("选择题选项不能为空。"));
+                }
+                if (StringUtils.equals(tup.getT1().getTypCd(), ICommonConstDefine.QUES_TYP_CD_SHORT_ANSWER) && !tup.getT2().isEmpty()) {
+
+                    return Mono.error(new SurveyValidationException("简答题选项只能为空。"));
                 }
 
                 return Mono.just(tup);
@@ -245,7 +254,6 @@ public class QuesService {
                 return tup;
             })
             .flatMap(tup -> quesRepository.save(tup.getT1()).map(one -> tup))
-            .switchIfEmpty(Mono.error(new SurveyValidationException("新增题目校验失败。")))
             .flatMap(tup -> answRepository.deleteByQuesCdAndLastMantUsr(tup.getT1().getQuesCd(), tup.getT1().getLastMantUsr()).map(cnt -> tup))
             .map(tup -> {
 

@@ -115,7 +115,7 @@ public class RespRecService {
                 }
                 if (tup.getT3().isEmpty()) {
 
-                    return Mono.error(new SurveyValidationException("选项编号不能为空。"));
+                    return Mono.error(new SurveyValidationException("作答不能为空。"));
                 }
 
                 return Mono.just(tup);
@@ -140,7 +140,13 @@ public class RespRecService {
             }))
             .flatMap(tup -> {
 
-                Mono<List<AnswEntity>> answList = answRepository.findByQuesCd(tup.getT1().getQuesCd()).filter(en -> en.getScre() != null && 0 < en.getScre()).collectList();
+                AnswEntity answEntity = new AnswEntity();
+                answEntity.setAnswCd(tup.getT3().get(0));
+                answEntity.setScre(50);
+
+                Mono<List<AnswEntity>> answList = answRepository.findByQuesCd(tup.getT1().getQuesCd())
+                    .defaultIfEmpty(answEntity)
+                    .filter(en -> en.getScre() != null && 0 < en.getScre()).collectList();
                 return Mono.zip(Mono.just(tup), answList, (t, a) -> Tuples.of(t.getT1(), t.getT2(), t.getT3(), a));
             }).map(tup -> {
 

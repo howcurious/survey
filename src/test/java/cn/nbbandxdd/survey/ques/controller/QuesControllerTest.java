@@ -1,5 +1,6 @@
 package cn.nbbandxdd.survey.ques.controller;
 
+import cn.nbbandxdd.survey.common.ICommonConstDefine;
 import cn.nbbandxdd.survey.exam.controller.vo.ExamVO;
 import cn.nbbandxdd.survey.login.controller.vo.LoginVO;
 import cn.nbbandxdd.survey.ques.controller.vo.AnswVO;
@@ -46,33 +47,46 @@ class QuesControllerTest {
         for (int i = 0; i < 1; ++i) {
 
             AnswVO tmp = new AnswVO();
-            tmp.setDsc("testanswX" + i);
+            tmp.setDsc("testanswX1" + i);
             tmp.setScre(i);
 
             lisAnswVO.add(tmp);
         }
 
-        QuesByPronVO voi = new QuesByPronVO();
-        voi.setDsc("testquesX");
-        voi.setComm("testcommX");
-        voi.setTypCd("1");
-        voi.setAnswList(lisAnswVO);
+        QuesByPronVO voi1 = new QuesByPronVO();
+        voi1.setDsc("testquesX1");
+        voi1.setComm("testcommX1");
+        voi1.setTypCd(ICommonConstDefine.QUES_TYP_CD_SINGLE_CHOICE);
+        voi1.setAnswList(lisAnswVO);
 
         QuesVO quesVO = webTestClient
             .post()
             .uri("/ques/insert")
             .header("authorization", "Bearer " + Objects.requireNonNull(loginVO).getToken())
-            .body(Mono.just(voi), QuesByPronVO.class)
+            .body(Mono.just(voi1), QuesByPronVO.class)
             .exchange()
             .expectStatus().isOk()
             .expectBody(QuesVO.class).returnResult().getResponseBody();
+
+        QuesByPronVO voi3 = new QuesByPronVO();
+        voi3.setDsc("testquesX3");
+        voi3.setComm("testcommX3");
+        voi3.setTypCd(ICommonConstDefine.QUES_TYP_CD_SHORT_ANSWER);
+
+        webTestClient
+            .post()
+            .uri("/ques/insert")
+            .header("authorization", "Bearer " + Objects.requireNonNull(loginVO).getToken())
+            .body(Mono.just(voi3), QuesByPronVO.class)
+            .exchange()
+            .expectStatus().isOk();
 
         // /ques/update
         List<AnswVO> lisAnswVOu = new ArrayList<>();
         for (int i = 0; i < 2; ++i) {
 
             AnswVO tmp = new AnswVO();
-            tmp.setDsc("testanswXX" + i);
+            tmp.setDsc("testanswX2" + i);
             tmp.setScre(i);
 
             lisAnswVOu.add(tmp);
@@ -80,9 +94,9 @@ class QuesControllerTest {
 
         QuesByPronVO vou = new QuesByPronVO();
         vou.setQuesCd(Objects.requireNonNull(quesVO).getQuesCd());
-        vou.setDsc("testquesXX");
-        vou.setComm("testcommXX");
-        vou.setTypCd("2");
+        vou.setDsc("testquesX2");
+        vou.setComm("testcommX2");
+        vou.setTypCd(ICommonConstDefine.QUES_TYP_CD_MULTIPLE_CHOICE);
         vou.setAnswList(lisAnswVOu);
 
         webTestClient
