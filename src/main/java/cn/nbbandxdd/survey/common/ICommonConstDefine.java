@@ -21,6 +21,16 @@ public interface ICommonConstDefine {
     String REDIS_KEY_ACCESS_TOKEN = "RedisKeyAccessToken";
 
     /**
+     * <p>Redis键，上次更新access_token的时间戳。
+     */
+    String REDIS_KEY_ACCESS_TOKEN_TIMESTAMP = "RedisKeyAccessTokenTimestamp";
+
+    /**
+     * <p>Redis分布式锁，用于更新access_token。
+     */
+    String REDIS_LOCK_ACCESS_TOKEN = "RedisLockAccessToken";
+
+    /**
      * <p>微信小程序错误码：请求成功。
      */
     String WECHAT_ERRCODE_SUCCESS = "0";
