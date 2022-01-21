@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -116,6 +117,14 @@ public class RespRecService {
                 if (tup.getT3().isEmpty()) {
 
                     return Mono.error(new SurveyValidationException("作答不能为空。"));
+                }
+                if (StringUtils.equals(tup.getT3().get(0), ICommonConstDefine.QUES_TYP_CD_NUMBER_SHORT_ANSWER) && !StringUtils.isNumeric(tup.getT3().get(0))) {
+
+                    return Mono.error(new SurveyValidationException("数字型简答题作答格式错误。"));
+                }
+                if (StringUtils.equals(tup.getT3().get(0), ICommonConstDefine.QUES_TYP_CD_DATE_SHORT_ANSWER) && !Pattern.matches("^\\d{4}/\\d{1,2}/\\d{1,2}$", tup.getT3().get(0))) {
+
+                    return Mono.error(new SurveyValidationException("日期型简答题作答格式错误。"));
                 }
 
                 return Mono.just(tup);

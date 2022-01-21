@@ -121,9 +121,17 @@ public interface ICommonConstDefine {
      */
     String QUES_TYP_CD_MULTIPLE_CHOICE = "2";
     /**
-     * <p>题目类型：简答。
+     * <p>题目类型：文本型简答。
      */
-    String QUES_TYP_CD_SHORT_ANSWER = "3";
+    String QUES_TYP_CD_TEXT_SHORT_ANSWER = "3";
+    /**
+     * <p>题目类型：数字型简答。
+     */
+    String QUES_TYP_CD_NUMBER_SHORT_ANSWER = "4";
+    /**
+     * <p>题目类型：日期型简答。
+     */
+    String QUES_TYP_CD_DATE_SHORT_ANSWER = "5";
     /**
      * <p>题目类型集合。
      */
@@ -132,7 +140,9 @@ public interface ICommonConstDefine {
         {
             add(QUES_TYP_CD_SINGLE_CHOICE);
             add(QUES_TYP_CD_MULTIPLE_CHOICE);
-            add(QUES_TYP_CD_SHORT_ANSWER);
+            add(QUES_TYP_CD_TEXT_SHORT_ANSWER);
+            add(QUES_TYP_CD_NUMBER_SHORT_ANSWER);
+            add(QUES_TYP_CD_DATE_SHORT_ANSWER);
         }
     };
 

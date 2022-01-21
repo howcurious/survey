@@ -103,7 +103,8 @@ public class QuesService {
 
                     return Mono.error(new SurveyValidationException("选择题选项不能为空。"));
                 }
-                if (StringUtils.equals(tup.getT1().getTypCd(), ICommonConstDefine.QUES_TYP_CD_SHORT_ANSWER) && !tup.getT2().isEmpty()) {
+                if ((StringUtils.equals(tup.getT1().getTypCd(), ICommonConstDefine.QUES_TYP_CD_TEXT_SHORT_ANSWER) || StringUtils.equals(tup.getT1().getTypCd(), ICommonConstDefine.QUES_TYP_CD_NUMBER_SHORT_ANSWER) || StringUtils.equals(tup.getT1().getTypCd(), ICommonConstDefine.QUES_TYP_CD_DATE_SHORT_ANSWER)) &&
+                    !tup.getT2().isEmpty()) {
 
                     return Mono.error(new SurveyValidationException("简答题选项只能为空。"));
                 }
@@ -233,7 +234,8 @@ public class QuesService {
 
                     return Mono.error(new SurveyValidationException("选择题选项不能为空。"));
                 }
-                if (StringUtils.equals(tup.getT1().getTypCd(), ICommonConstDefine.QUES_TYP_CD_SHORT_ANSWER) && !tup.getT2().isEmpty()) {
+                if ((StringUtils.equals(tup.getT1().getTypCd(), ICommonConstDefine.QUES_TYP_CD_TEXT_SHORT_ANSWER) || StringUtils.equals(tup.getT1().getTypCd(), ICommonConstDefine.QUES_TYP_CD_NUMBER_SHORT_ANSWER) || StringUtils.equals(tup.getT1().getTypCd(), ICommonConstDefine.QUES_TYP_CD_DATE_SHORT_ANSWER)) &&
+                    !tup.getT2().isEmpty()) {
 
                     return Mono.error(new SurveyValidationException("简答题选项只能为空。"));
                 }

@@ -71,7 +71,7 @@ class QuesControllerTest {
         QuesByPronVO voi3 = new QuesByPronVO();
         voi3.setDsc("testquesX3");
         voi3.setComm("testcommX3");
-        voi3.setTypCd(ICommonConstDefine.QUES_TYP_CD_SHORT_ANSWER);
+        voi3.setTypCd(ICommonConstDefine.QUES_TYP_CD_TEXT_SHORT_ANSWER);
 
         webTestClient
             .post()
