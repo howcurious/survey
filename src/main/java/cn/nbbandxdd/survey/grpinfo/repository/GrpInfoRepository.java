@@ -43,6 +43,6 @@ public interface GrpInfoRepository extends ReactiveCrudRepository<GrpInfoEntity,
      *
      * @return 分组信息Entity
      */
-    @Query("SELECT DISTINCT DPRT_NAM, SEQ_NO FROM GRP_INFO ORDER BY SEQ_NO")
+    @Query("SELECT DPRT_NAM, MIN(SEQ_NO) AS SEQ_NO FROM GRP_INFO GROUP BY DPRT_NAM ORDER BY SEQ_NO")
     Flux<GrpInfoEntity> findDistinctDprtNam();
 }
