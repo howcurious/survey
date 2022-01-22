@@ -68,7 +68,6 @@ class NCoVControllerTest {
             .exchange()
             .expectStatus().isOk()
             .expectBody()
-                .jsonPath("$.openId").isNotEmpty()
                 .jsonPath("$.q01").isEqualTo("q01");
 
         // /NCoV/save
@@ -90,7 +89,6 @@ class NCoVControllerTest {
             .exchange()
             .expectStatus().isOk()
             .expectBody()
-            .jsonPath("$.openId").isNotEmpty()
-            .jsonPath("$.q01").isEqualTo("qU1");
+                .jsonPath("$.q01").isEqualTo("qU1");
     }
 }

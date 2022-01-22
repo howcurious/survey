@@ -7,6 +7,8 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDateTime;
+
 @Data
 @Table("NCoV")
 public class NCoVEntity implements Persistable<String> {
@@ -56,6 +58,9 @@ public class NCoVEntity implements Persistable<String> {
 
     @Column("Q14")
     private String q14;
+
+    @Column("LAST_MANT_TMSTP")
+    private LocalDateTime lastMantTmstp;
 
     @Transient
     private boolean isNew;

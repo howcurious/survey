@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+
 @Service
 public class NCoVService {
 
@@ -27,6 +29,7 @@ public class NCoVService {
             }))
             .flatMap(one -> Mono.zip(Mono.just(one), nCoVRepository.findById(one.getOpenId()).defaultIfEmpty(new NCoVEntity()), (a, b) -> {
 
+                a.setLastMantTmstp(LocalDateTime.now());
                 a.setNew(StringUtils.isBlank(b.getOpenId()));
                 return a;
             }))

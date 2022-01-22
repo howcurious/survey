@@ -5,8 +5,6 @@ import lombok.Data;
 @Data
 public class NCoVVO {
 
-    private String openId;
-
     private String q01;
 
     private String q02;
