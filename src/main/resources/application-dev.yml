@@ -12,6 +12,11 @@ spring:
     url: r2dbc:h2:mem:///testdb?allowMultiQueries=true&serverTimezone=Asia%2FShanghai
     username:
     password:
+    pool:
+      max-size: 50
+      validation-query: select 1
+      max-acquire-time: 60s
+      max-idle-time: 10m
 
 wechat:
   app-id: 
