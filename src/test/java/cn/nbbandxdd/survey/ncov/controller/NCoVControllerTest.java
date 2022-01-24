@@ -1,6 +1,7 @@
 package cn.nbbandxdd.survey.ncov.controller;
 
 import cn.nbbandxdd.survey.login.controller.vo.LoginVO;
+import cn.nbbandxdd.survey.ncov.controller.vo.NCoVStatVO;
 import cn.nbbandxdd.survey.ncov.controller.vo.NCoVVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,5 +91,25 @@ class NCoVControllerTest {
             .expectStatus().isOk()
             .expectBody()
                 .jsonPath("$.q01").isEqualTo("qU1");
+
+        // /NCov/findDprtStat
+        webTestClient
+            .post()
+            .uri("/NCoV/findDprtStat")
+            .header("authorization", "Bearer " + Objects.requireNonNull(loginVO).getToken())
+            .exchange()
+            .expectStatus().isOk();
+
+        // /NCoV/findGrpStat
+        NCoVStatVO vofgs = new NCoVStatVO();
+        vofgs.setDprtNam("testdprt");
+
+        webTestClient
+            .post()
+            .uri("/NCoV/findGrpStat")
+            .header("authorization", "Bearer " + Objects.requireNonNull(loginVO).getToken())
+            .body(Mono.just(vofgs), NCoVStatVO.class)
+            .exchange()
+            .expectStatus().isOk();
     }
 }

@@ -4,8 +4,10 @@ import cn.nbbandxdd.survey.common.ICommonConstDefine;
 import cn.nbbandxdd.survey.common.ModelMapper;
 import cn.nbbandxdd.survey.common.exception.SurveyMsgSecCheckException;
 import cn.nbbandxdd.survey.common.wechat.msgseccheck.MsgSecCheck;
+import cn.nbbandxdd.survey.ncov.controller.vo.NCoVStatVO;
 import cn.nbbandxdd.survey.ncov.controller.vo.NCoVVO;
 import cn.nbbandxdd.survey.ncov.repository.entity.NCoVEntity;
+import cn.nbbandxdd.survey.ncov.repository.entity.NCoVStatEntity;
 import cn.nbbandxdd.survey.ncov.service.NCoVService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
@@ -37,7 +40,9 @@ public class NCoVController {
     public RouterFunction<?> nCoVRouterFunction() {
 
         return route(POST("/NCoV/save"), this::save)
-            .andRoute(POST("/NCoV/findById"), this::findById);
+            .andRoute(POST("/NCoV/findById"), this::findById)
+            .andRoute(POST("/NCoV/findDprtStat"), this::findDprtStat)
+            .andRoute(POST("/NCoV/findGrpStat"), this::findGrpStat);
     }
 
     public Mono<ServerResponse> save(ServerRequest request) {
@@ -64,5 +69,24 @@ public class NCoVController {
             .map(one -> ModelMapper.map(one, NCoVVO.class));
 
         return ServerResponse.ok().body(body, NCoVVO.class);
+    }
+
+    public Mono<ServerResponse> findDprtStat(ServerRequest request) {
+
+        Flux<NCoVStatVO> body = nCoVService.findDprtStat()
+            .map(one -> ModelMapper.map(one, NCoVStatVO.class));
+
+        return ServerResponse.ok().body(body,NCoVStatVO.class);
+    }
+
+    public Mono<ServerResponse> findGrpStat(ServerRequest request) {
+
+        Mono<NCoVStatEntity> entity = request.bodyToMono(NCoVStatVO.class)
+            .map(one -> ModelMapper.map(one, NCoVStatEntity.class));
+
+        Flux<NCoVStatVO> body = nCoVService.findGrpStat(entity)
+            .map(one -> ModelMapper.map(one, NCoVStatVO.class));
+
+        return ServerResponse.ok().body(body,NCoVStatVO.class);
     }
 }

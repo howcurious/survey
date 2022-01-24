@@ -62,6 +62,27 @@ public class NCoVEntity implements Persistable<String> {
     @Column("LAST_MANT_TMSTP")
     private LocalDateTime lastMantTmstp;
 
+    @Column("USR_NAM")
+    private String usrNam;
+
+    @Column("DPRT_NAM")
+    private String dprtNam;
+
+    @Column("GRP_NAM")
+    private String grpNam;
+
+    @Column("HAM_CD")
+    private String hamCd;
+
+    @Column("PHO_NUM")
+    private String phoNum;
+
+    @Column("DIST")
+    private String dist;
+
+    @Column("ADDR")
+    private String addr;
+
     @Transient
     private boolean isNew;
 

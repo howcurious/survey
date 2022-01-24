@@ -3,8 +3,10 @@ package cn.nbbandxdd.survey.ncov.service;
 import cn.nbbandxdd.survey.common.ICommonConstDefine;
 import cn.nbbandxdd.survey.ncov.repository.NCoVRepository;
 import cn.nbbandxdd.survey.ncov.repository.entity.NCoVEntity;
+import cn.nbbandxdd.survey.ncov.repository.entity.NCoVStatEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -42,5 +44,16 @@ public class NCoVService {
         return Mono
             .deferContextual(ctx -> Mono.just(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID).toString()))
             .flatMap(nCoVRepository::findById);
+    }
+
+    public Flux<NCoVStatEntity> findDprtStat() {
+
+        return nCoVRepository.findDprtStat();
+    }
+
+    public Flux<NCoVStatEntity> findGrpStat(Mono<NCoVStatEntity> entity) {
+
+        return entity
+            .flatMapMany(one -> nCoVRepository.findGrpStat(one.getDprtNam()));
     }
 }
