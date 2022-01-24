@@ -85,7 +85,7 @@ public class QuesController {
             .andRoute(POST("/ques/findByResp"), this::findByResp)
             .andRoute(POST("/ques/findByExp"), this::findByExp)
             .andRoute(POST("/ques/findList"), this::findList)
-            .andRoute(POST("/ques/findCommonList"), this::findCommonList);
+            .andRoute(POST("/ques/findCommonList"), this::findList);
     }
 
     /**
