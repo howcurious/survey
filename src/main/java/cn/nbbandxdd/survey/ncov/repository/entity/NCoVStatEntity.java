@@ -18,9 +18,15 @@ public class NCoVStatEntity {
     @Column("OFF_CNT_I")
     private Integer offCntI;
 
+    @Column("LEAVE_CNT_I")
+    private Integer leaveCntI;
+
     @Column("ON_CNT_E")
     private Integer onCntE;
 
     @Column("OFF_CNT_E")
     private Integer offCntE;
+
+    @Column("LEAVE_CNT_E")
+    private Integer leaveCntE;
 }

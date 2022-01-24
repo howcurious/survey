@@ -13,7 +13,11 @@ public class NCoVStatVO {
 
     private Integer offCntI;
 
+    private Integer leaveCntI;
+
     private Integer onCntE;
 
     private Integer offCntE;
+
+    private Integer leaveCntE;
 }
