@@ -15,9 +15,13 @@ public class NCoVStatVO {
 
     private Integer leaveCntI;
 
+    private Integer grayCntI;
+
     private Integer onCntE;
 
     private Integer offCntE;
 
     private Integer leaveCntE;
+
+    private Integer grayCntE;
 }

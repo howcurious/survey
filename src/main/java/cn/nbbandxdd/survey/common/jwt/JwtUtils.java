@@ -2,15 +2,11 @@ package cn.nbbandxdd.survey.common.jwt;
 
 import java.util.Date;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 /**
  * <p>Jwt工具类。
@@ -41,7 +37,7 @@ public class JwtUtils implements InitializingBean {
     @Value("${jwt.key}")
     private String key;
 
-    private SecretKey secretKey;
+    private Algorithm algorithm;
 
     /**
      * afterPropertiesSet。
@@ -49,7 +45,7 @@ public class JwtUtils implements InitializingBean {
     @Override
     public void afterPropertiesSet() {
 
-        secretKey = new SecretKeySpec(key.getBytes(), "HmacSHA256");
+        algorithm = Algorithm.HMAC256(key);
 
         instance = this;
     }
@@ -62,9 +58,7 @@ public class JwtUtils implements InitializingBean {
      */
     public static String fillbackOpenidFromToken(String token) {
 
-        return Jwts
-            .parserBuilder().setSigningKey(instance().secretKey).build()
-            .parseClaimsJws(token).getBody().getSubject();
+        return JWT.decode(token).getSubject();
     }
 
     /**
@@ -75,9 +69,8 @@ public class JwtUtils implements InitializingBean {
      */
     public static String generateTokenFromOpenid(String openid) {
 
-        return Jwts.builder()
-            .setSubject(openid).setIssuedAt(new Date())
-            .signWith(instance().secretKey, SignatureAlgorithm.HS256)
-            .compact();
+        return JWT.create()
+            .withSubject(openid).withIssuedAt(new Date())
+            .sign(instance().algorithm);
     }
 }

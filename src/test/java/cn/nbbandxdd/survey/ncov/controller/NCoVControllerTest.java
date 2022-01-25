@@ -1,6 +1,7 @@
 package cn.nbbandxdd.survey.ncov.controller;
 
 import cn.nbbandxdd.survey.login.controller.vo.LoginVO;
+import cn.nbbandxdd.survey.ncov.controller.vo.NCoVDetailVO;
 import cn.nbbandxdd.survey.ncov.controller.vo.NCoVStatVO;
 import cn.nbbandxdd.survey.ncov.controller.vo.NCoVVO;
 import org.junit.jupiter.api.Test;
@@ -109,6 +110,19 @@ class NCoVControllerTest {
             .uri("/NCoV/findGrpStat")
             .header("authorization", "Bearer " + Objects.requireNonNull(loginVO).getToken())
             .body(Mono.just(vofgs), NCoVStatVO.class)
+            .exchange()
+            .expectStatus().isOk();
+
+        // /NCoV/findDetail
+        NCoVDetailVO vofd = new NCoVDetailVO();
+        vofd.setDprtNam("testdprt");
+        vofd.setGrpNam("testgrp");
+
+        webTestClient
+            .post()
+            .uri("/NCoV/findDetail")
+            .header("authorization", "Bearer " + Objects.requireNonNull(loginVO).getToken())
+            .body(Mono.just(vofd), NCoVDetailVO.class)
             .exchange()
             .expectStatus().isOk();
     }

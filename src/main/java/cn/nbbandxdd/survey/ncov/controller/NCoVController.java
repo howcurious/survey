@@ -4,8 +4,10 @@ import cn.nbbandxdd.survey.common.ICommonConstDefine;
 import cn.nbbandxdd.survey.common.ModelMapper;
 import cn.nbbandxdd.survey.common.exception.SurveyMsgSecCheckException;
 import cn.nbbandxdd.survey.common.wechat.msgseccheck.MsgSecCheck;
+import cn.nbbandxdd.survey.ncov.controller.vo.NCoVDetailVO;
 import cn.nbbandxdd.survey.ncov.controller.vo.NCoVStatVO;
 import cn.nbbandxdd.survey.ncov.controller.vo.NCoVVO;
+import cn.nbbandxdd.survey.ncov.repository.entity.NCoVDetailEntity;
 import cn.nbbandxdd.survey.ncov.repository.entity.NCoVEntity;
 import cn.nbbandxdd.survey.ncov.repository.entity.NCoVStatEntity;
 import cn.nbbandxdd.survey.ncov.service.NCoVService;
@@ -42,7 +44,8 @@ public class NCoVController {
         return route(POST("/NCoV/save"), this::save)
             .andRoute(POST("/NCoV/findById"), this::findById)
             .andRoute(POST("/NCoV/findDprtStat"), this::findDprtStat)
-            .andRoute(POST("/NCoV/findGrpStat"), this::findGrpStat);
+            .andRoute(POST("/NCoV/findGrpStat"), this::findGrpStat)
+            .andRoute(POST("/NCoV/findDetail"), this::findDetail);
     }
 
     public Mono<ServerResponse> save(ServerRequest request) {
@@ -76,7 +79,7 @@ public class NCoVController {
         Flux<NCoVStatVO> body = nCoVService.findDprtStat()
             .map(one -> ModelMapper.map(one, NCoVStatVO.class));
 
-        return ServerResponse.ok().body(body,NCoVStatVO.class);
+        return ServerResponse.ok().body(body, NCoVStatVO.class);
     }
 
     public Mono<ServerResponse> findGrpStat(ServerRequest request) {
@@ -87,6 +90,17 @@ public class NCoVController {
         Flux<NCoVStatVO> body = nCoVService.findGrpStat(entity)
             .map(one -> ModelMapper.map(one, NCoVStatVO.class));
 
-        return ServerResponse.ok().body(body,NCoVStatVO.class);
+        return ServerResponse.ok().body(body, NCoVStatVO.class);
+    }
+
+    public Mono<ServerResponse> findDetail(ServerRequest request) {
+
+        Mono<NCoVDetailEntity> entity = request.bodyToMono(NCoVDetailVO.class)
+            .map(one -> ModelMapper.map(one, NCoVDetailEntity.class));
+
+        Flux<NCoVDetailVO> body = nCoVService.findDetail(entity)
+            .map(one -> ModelMapper.map(one, NCoVDetailVO.class));
+
+        return ServerResponse.ok().body(body, NCoVDetailVO.class);
     }
 }

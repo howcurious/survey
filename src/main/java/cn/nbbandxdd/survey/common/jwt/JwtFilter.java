@@ -2,7 +2,7 @@ package cn.nbbandxdd.survey.common.jwt;
 
 import cn.nbbandxdd.survey.common.ICommonConstDefine;
 import cn.nbbandxdd.survey.common.exception.SurveyTokenException;
-import io.jsonwebtoken.JwtException;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -49,7 +49,7 @@ public class JwtFilter implements WebFilter {
                 try {
 
                     return Optional.of(JwtUtils.fillbackOpenidFromToken(token));
-                } catch (JwtException ex) {
+                } catch (JWTDecodeException ex) {
 
                     return Optional.empty();
                 }

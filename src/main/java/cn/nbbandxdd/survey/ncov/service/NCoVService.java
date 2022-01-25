@@ -2,6 +2,7 @@ package cn.nbbandxdd.survey.ncov.service;
 
 import cn.nbbandxdd.survey.common.ICommonConstDefine;
 import cn.nbbandxdd.survey.ncov.repository.NCoVRepository;
+import cn.nbbandxdd.survey.ncov.repository.entity.NCoVDetailEntity;
 import cn.nbbandxdd.survey.ncov.repository.entity.NCoVEntity;
 import cn.nbbandxdd.survey.ncov.repository.entity.NCoVStatEntity;
 import org.apache.commons.lang3.StringUtils;
@@ -55,5 +56,11 @@ public class NCoVService {
 
         return entity
             .flatMapMany(one -> nCoVRepository.findGrpStat(one.getDprtNam()));
+    }
+
+    public Flux<NCoVDetailEntity> findDetail(Mono<NCoVDetailEntity> entity) {
+
+        return entity
+            .flatMapMany(one -> nCoVRepository.findDetail(one.getDprtNam(), one.getGrpNam()));
     }
 }
