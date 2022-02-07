@@ -111,7 +111,21 @@ class NCoVControllerTest {
             .header("authorization", "Bearer " + Objects.requireNonNull(loginVO).getToken())
             .body(Mono.just(vofgs), NCoVStatVO.class)
             .exchange()
-            .expectStatus().isOk();
+            .expectStatus().isOk()
+            .expectBody()
+                .jsonPath("$[0].grpNam").isNotEmpty()
+                .jsonPath("$[0].onCntI").isNotEmpty()
+                .jsonPath("$[0].offCntI").isNotEmpty()
+                .jsonPath("$[0].leaveCntI").isNotEmpty()
+                .jsonPath("$[0].awayCntI").isNotEmpty()
+                .jsonPath("$[0].tempCntI").isNotEmpty()
+                .jsonPath("$[0].grayCntI").isNotEmpty()
+                .jsonPath("$[0].onCntE").isNotEmpty()
+                .jsonPath("$[0].offCntE").isNotEmpty()
+                .jsonPath("$[0].leaveCntE").isNotEmpty()
+                .jsonPath("$[0].awayCntE").isNotEmpty()
+                .jsonPath("$[0].tempCntE").isNotEmpty()
+                .jsonPath("$[0].grayCntE").isNotEmpty();
 
         // /NCoV/findDetail
         NCoVDetailVO vofd = new NCoVDetailVO();
