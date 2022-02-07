@@ -21,6 +21,12 @@ public class NCoVStatEntity {
     @Column("LEAVE_CNT_I")
     private Integer leaveCntI;
 
+    @Column("AWAY_CNT_I")
+    private Integer awayCntI;
+
+    @Column("TEMP_CNT_I")
+    private Integer tempCntI;
+
     @Column("GRAY_CNT_I")
     private Integer grayCntI;
 
@@ -32,6 +38,12 @@ public class NCoVStatEntity {
 
     @Column("LEAVE_CNT_E")
     private Integer leaveCntE;
+
+    @Column("AWAY_CNT_E")
+    private Integer awayCntE;
+
+    @Column("TEMP_CNT_E")
+    private Integer tempCntE;
 
     @Column("GRAY_CNT_E")
     private Integer grayCntE;
