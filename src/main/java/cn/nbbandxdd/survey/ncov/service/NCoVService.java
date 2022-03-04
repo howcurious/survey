@@ -49,18 +49,25 @@ public class NCoVService {
 
     public Flux<NCoVStatEntity> findDprtStat() {
 
-        return nCoVRepository.findDprtStat();
+        return Mono
+            .deferContextual(ctx -> Mono.just(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID).toString()))
+            .filterWhen(nCoVRepository::existsByOpenIdAndHamCd)
+            .flatMapMany(one -> nCoVRepository.findDprtStat());
     }
 
     public Flux<NCoVStatEntity> findGrpStat(Mono<NCoVStatEntity> entity) {
 
-        return entity
-            .flatMapMany(one -> nCoVRepository.findGrpStat(one.getDprtNam()));
+        return Mono
+            .deferContextual(ctx -> Mono.just(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID).toString()))
+            .filterWhen(nCoVRepository::existsByOpenIdAndHamCd)
+            .flatMapMany(one -> entity.flatMapMany(en -> nCoVRepository.findGrpStat(en.getDprtNam())));
     }
 
     public Flux<NCoVDetailEntity> findDetail(Mono<NCoVDetailEntity> entity) {
 
-        return entity
-            .flatMapMany(one -> nCoVRepository.findDetail(one.getDprtNam(), one.getGrpNam()));
+        return Mono
+            .deferContextual(ctx -> Mono.just(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID).toString()))
+            .filterWhen(nCoVRepository::existsByOpenIdAndHamCd)
+            .flatMapMany(one -> entity.flatMapMany(en -> nCoVRepository.findDetail(en.getDprtNam(), en.getGrpNam())));
     }
 }
