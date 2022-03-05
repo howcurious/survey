@@ -51,19 +51,15 @@ public class NCoVService {
 
         return Mono
             .deferContextual(ctx -> Mono.just(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID).toString()))
-            .filterWhen(nCoVRepository::existsByOpenIdAndHamCd)
-            .flatMapMany(one -> {
-
-                System.out.println("yes: " + one);
-                return nCoVRepository.findDprtStat();
-            });
+            .filterWhen(openId -> nCoVRepository.findCntByOpenIdAndHamCd(openId).map(cnt -> 1 == cnt))
+            .flatMapMany(one -> nCoVRepository.findDprtStat());
     }
 
     public Flux<NCoVStatEntity> findGrpStat(Mono<NCoVStatEntity> entity) {
 
         return Mono
             .deferContextual(ctx -> Mono.just(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID).toString()))
-            .filterWhen(nCoVRepository::existsByOpenIdAndHamCd)
+            .filterWhen(openId -> nCoVRepository.findCntByOpenIdAndHamCd(openId).map(cnt -> 1 == cnt))
             .flatMapMany(one -> entity.flatMapMany(en -> nCoVRepository.findGrpStat(en.getDprtNam())));
     }
 
@@ -71,7 +67,7 @@ public class NCoVService {
 
         return Mono
             .deferContextual(ctx -> Mono.just(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID).toString()))
-            .filterWhen(nCoVRepository::existsByOpenIdAndHamCd)
+            .filterWhen(openId -> nCoVRepository.findCntByOpenIdAndHamCd(openId).map(cnt -> 1 == cnt))
             .flatMapMany(one -> entity.flatMapMany(en -> nCoVRepository.findDetail(en.getDprtNam(), en.getGrpNam())));
     }
 }

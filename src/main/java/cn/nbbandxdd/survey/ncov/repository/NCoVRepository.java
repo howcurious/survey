@@ -76,6 +76,6 @@ public interface NCoVRepository extends ReactiveCrudRepository<NCoVEntity, Strin
     @Query("SELECT DPRT_NAM, GRP_NAM, USR_NAM, HAM_CD, Q01 FROM NCoV WHERE DPRT_NAM = :dprtNam AND GRP_NAM = :grpNam ORDER BY HAM_CD")
     Flux<NCoVDetailEntity> findDetail(String dprtNam, String grpNam);
 
-    @Query("SELECT CASE WHEN COUNT(1) = 1 THEN TRUE ELSE FALSE END FROM NCoV WHERE OPEN_ID = :openId AND HAM_CD LIKE 'TY%'")
-    Mono<Boolean> existsByOpenIdAndHamCd(String openId);
+    @Query("SELECT COUNT(1) FROM NCoV WHERE OPEN_ID = :openId AND HAM_CD LIKE 'TY%'")
+    Mono<Integer> findCntByOpenIdAndHamCd(String openId);
 }
