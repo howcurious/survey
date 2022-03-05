@@ -52,7 +52,11 @@ public class NCoVService {
         return Mono
             .deferContextual(ctx -> Mono.just(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID).toString()))
             .filterWhen(nCoVRepository::existsByOpenIdAndHamCd)
-            .flatMapMany(one -> nCoVRepository.findDprtStat());
+            .flatMapMany(one -> {
+
+                System.out.println("yes: " + one);
+                return nCoVRepository.findDprtStat();
+            });
     }
 
     public Flux<NCoVStatEntity> findGrpStat(Mono<NCoVStatEntity> entity) {
