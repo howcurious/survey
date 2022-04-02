@@ -166,6 +166,7 @@ CREATE TABLE NCoV (
     PHO_NUM         VARCHAR(200),
     DIST            VARCHAR(200),
     ADDR            VARCHAR(200),
+    FLAG            CHAR(1),
 
     CONSTRAINT PK_NCoV PRIMARY KEY (OPEN_ID)
 );

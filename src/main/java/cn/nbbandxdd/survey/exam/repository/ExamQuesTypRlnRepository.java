@@ -27,8 +27,10 @@ public interface ExamQuesTypRlnRepository extends ReactiveCrudRepository<ExamQue
      * @return 影响行数
      */
     @Modifying
-    @Query("INSERT INTO EXAM_QUES_TYP_RLN (EXAM_CD, QUES_TYP_CD, SCRE, CNT, LAST_MANT_USR, LAST_MANT_DAT, LAST_MANT_TMSTP) " +
-        "VALUES (:#{#entity.examCd}, :#{#entity.quesTypCd}, :#{#entity.scre}, :#{#entity.cnt}, :#{#entity.lastMantUsr}, :#{#entity.lastMantDat}, :#{#entity.lastMantTmstp})")
+    @Query("""
+        INSERT INTO EXAM_QUES_TYP_RLN (EXAM_CD, QUES_TYP_CD, SCRE, CNT, LAST_MANT_USR, LAST_MANT_DAT, LAST_MANT_TMSTP) \
+        VALUES (:#{#entity.examCd}, :#{#entity.quesTypCd}, :#{#entity.scre}, :#{#entity.cnt}, :#{#entity.lastMantUsr}, :#{#entity.lastMantDat}, :#{#entity.lastMantTmstp}) \
+        """)
     Mono<Integer> insert(ExamQuesTypRlnEntity entity);
 
     /**

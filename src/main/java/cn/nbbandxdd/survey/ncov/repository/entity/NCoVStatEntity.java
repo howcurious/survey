@@ -47,4 +47,22 @@ public class NCoVStatEntity {
 
     @Column("GRAY_CNT_E")
     private Integer grayCntE;
+
+    @Column("ON_CNT_V")
+    private Integer onCntV;
+
+    @Column("OFF_CNT_V")
+    private Integer offCntV;
+
+    @Column("LEAVE_CNT_V")
+    private Integer leaveCntV;
+
+    @Column("AWAY_CNT_V")
+    private Integer awayCntV;
+
+    @Column("TEMP_CNT_V")
+    private Integer tempCntV;
+
+    @Column("GRAY_CNT_V")
+    private Integer grayCntV;
 }

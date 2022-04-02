@@ -62,11 +62,13 @@ public interface DtlRecRepository extends ReactiveCrudRepository<DtlRecEntity, S
      * @param examCd 问卷编号
      * @return 手工选择题目问卷分数
      */
-    @Query("SELECT ROUND(" +
-        "(SELECT COUNT(1) FROM DTL_REC WHERE OPEN_ID = :openId AND EXAM_CD = :examCd AND SCRE > 0)" +
-        "/" +
-        "(SELECT COUNT(1) FROM EXAM_QUES_RLN WHERE EXAM_CD = :examCd) * 100" +
-        ")")
+    @Query("""
+        SELECT ROUND( \
+        (SELECT COUNT(1) FROM DTL_REC WHERE OPEN_ID = :openId AND EXAM_CD = :examCd AND SCRE > 0) \
+        / \
+        (SELECT COUNT(1) FROM EXAM_QUES_RLN WHERE EXAM_CD = :examCd) * 100 \
+        ) \
+        """)
     Mono<Integer> findScreByOpenIdAndExamCdForDefinite(String openId, String examCd);
 
     /**
@@ -76,10 +78,12 @@ public interface DtlRecRepository extends ReactiveCrudRepository<DtlRecEntity, S
      * @param examCd 问卷编号
      * @return 随机生成题目问卷分数
      */
-    @Query("SELECT CASE WHEN SUM(RLN.SCRE) IS NULL THEN 0 ELSE SUM(RLN.SCRE) END " +
-        "FROM (SELECT EXAM_CD, QUES_CD FROM DTL_REC WHERE OPEN_ID = :openId AND EXAM_CD = :examCd AND SCRE > 0) REC " +
-            "LEFT JOIN QUES ON QUES.QUES_CD = REC.QUES_CD " +
-            "LEFT JOIN EXAM_QUES_TYP_RLN RLN ON RLN.EXAM_CD = REC.EXAM_CD AND RLN.QUES_TYP_CD = QUES.TYP_CD")
+    @Query("""
+        SELECT CASE WHEN SUM(RLN.SCRE) IS NULL THEN 0 ELSE SUM(RLN.SCRE) END \
+        FROM (SELECT EXAM_CD, QUES_CD FROM DTL_REC WHERE OPEN_ID = :openId AND EXAM_CD = :examCd AND SCRE > 0) REC \
+            LEFT JOIN QUES ON QUES.QUES_CD = REC.QUES_CD \
+            LEFT JOIN EXAM_QUES_TYP_RLN RLN ON RLN.EXAM_CD = REC.EXAM_CD AND RLN.QUES_TYP_CD = QUES.TYP_CD \
+        """)
     Mono<Integer> findScreByOpenIdAndExamCdForRandom(String openId, String examCd);
 
     /**

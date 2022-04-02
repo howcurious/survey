@@ -32,4 +32,16 @@ public class NCoVStatVO {
     private Integer tempCntE;
 
     private Integer grayCntE;
+
+    private Integer onCntV;
+
+    private Integer offCntV;
+
+    private Integer leaveCntV;
+
+    private Integer awayCntV;
+
+    private Integer tempCntV;
+
+    private Integer grayCntV;
 }

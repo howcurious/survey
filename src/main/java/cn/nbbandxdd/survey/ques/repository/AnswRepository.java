@@ -59,8 +59,10 @@ public interface AnswRepository extends ReactiveCrudRepository<AnswEntity, Strin
      * @param quesCd 题目编号
      * @return 用户选择的答案编号
      */
-    @Query("SELECT ANSW_CD FROM ANSW " +
-        "WHERE QUES_CD = :quesCd AND (SELECT ANSW_CD FROM DTL_REC WHERE OPEN_ID = :openId AND EXAM_CD = :examCd and QUES_CD = :quesCd" +
-        ") LIKE CONCAT('%', ANSW_CD, '%')")
+    @Query("""
+        SELECT ANSW_CD FROM ANSW \
+        WHERE QUES_CD = :quesCd AND (SELECT ANSW_CD FROM DTL_REC WHERE OPEN_ID = :openId AND EXAM_CD = :examCd and QUES_CD = :quesCd \
+        ) LIKE CONCAT('%', ANSW_CD, '%') \
+        """)
     Flux<String> findSelByOpenIdAndExamCdAndQuesCd(String openId, String examCd, String quesCd);
 }

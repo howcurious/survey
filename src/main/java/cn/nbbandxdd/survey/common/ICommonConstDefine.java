@@ -1,5 +1,6 @@
 package cn.nbbandxdd.survey.common;
 
+import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,6 +48,8 @@ public interface ICommonConstDefine {
      * <p>公共标志集合。
      */
     Set<String> COMMON_IND_SET = new HashSet<>() {
+
+        @Serial
         private static final long serialVersionUID = 1L;
         {
             add(COMMON_IND_YES);
@@ -79,6 +82,8 @@ public interface ICommonConstDefine {
      * <p>问卷类型集合。
      */
     Set<String> EXAM_TYP_CD_SET = new HashSet<>() {
+
+        @Serial
         private static final long serialVersionUID = 1L;
         {
             add(EXAM_TYP_CD_DEFAULT);
@@ -136,6 +141,8 @@ public interface ICommonConstDefine {
      * <p>题目类型集合。
      */
     Set<String> QUES_TYP_CD_SET = new HashSet<>() {
+
+        @Serial
         private static final long serialVersionUID = 1L;
         {
             add(QUES_TYP_CD_SINGLE_CHOICE);
