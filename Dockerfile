@@ -15,4 +15,4 @@ COPY --from=builder2 application/dependencies/ ./
 COPY --from=builder2 application/spring-boot-loader/ ./
 COPY --from=builder2 application/snapshot-dependencies/ ./
 COPY --from=builder2 application/application/ ./
-ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
+ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher", "-Dreactor.netty.ioWorkerCount=16"]
