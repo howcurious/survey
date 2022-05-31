@@ -32,4 +32,6 @@ public class NCoVVO {
     private String q13;
 
     private String q14;
+
+    private String q15;
 }

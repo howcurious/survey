@@ -53,6 +53,7 @@ class NCoVControllerTest {
         vos.setQ12("q12");
         vos.setQ13("q13");
         vos.setQ14("q14");
+        vos.setQ15("q15");
 
         webTestClient
             .post()

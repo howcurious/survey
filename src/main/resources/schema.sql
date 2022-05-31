@@ -158,6 +158,7 @@ CREATE TABLE NCoV (
     Q12             VARCHAR(200),
     Q13             VARCHAR(200),
     Q14             VARCHAR(200),
+    Q15             VARCHAR(1000),
     LAST_MANT_TMSTP DATETIME,
     USR_NAM         VARCHAR(200),
     DPRT_NAM        VARCHAR(200),
