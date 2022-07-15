@@ -9,7 +9,7 @@ spring:
     username:
     password:
   r2dbc:
-    url: r2dbc:h2:mem:///testdb?allowMultiQueries=true&serverTimezone=Asia%2FShanghai
+    url: r2dbcs:h2:mem:///testdb?allowMultiQueries=true&serverTimezone=Asia%2FShanghai&DB_CLOSE_DELAY=-1
     username:
     password:
     pool:
