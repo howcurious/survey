@@ -26,7 +26,12 @@ public class JwtFilter implements WebFilter {
     /**
      * <p>登录请求路径。
      */
-    private final PathPattern pathPattern = new PathPatternParser().parse("/login");
+    private final PathPattern loginPathPattern = new PathPatternParser().parse("/login");
+
+    /**
+     * <p>健康检查请求路径。
+     */
+    private final PathPattern healthPathPattern = new PathPatternParser().parse("/actuator/health");
 
     /**
      * <p>校验Jwt。
@@ -35,7 +40,8 @@ public class JwtFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
-        if (pathPattern.matches(exchange.getRequest().getPath().pathWithinApplication())) {
+        if (loginPathPattern.matches(exchange.getRequest().getPath().pathWithinApplication()) ||
+            healthPathPattern.matches(exchange.getRequest().getPath())) {
 
             return chain.filter(exchange);
         }
