@@ -5,6 +5,9 @@
 .settings/
 .sts4-cache/
 
+# idea folder
+.idea/
+
 # target folder
 target/
 
