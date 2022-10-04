@@ -1,6 +1,6 @@
 logging:
   level:
-    root: ERROR
+    root: INFO
 
 spring:
   redis:
@@ -9,7 +9,7 @@ spring:
     username:
     password:
   r2dbc:
-#    关闭ssl连接的写法
+    #关闭ssl连接的写法
     url: r2dbc:mysql://localhost:3306/test_survey?characterEncoding=UTF-8&useSSL=false&sslMode=DISABLED
     username: root
     password: fshuai123
