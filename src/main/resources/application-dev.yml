@@ -1,6 +1,6 @@
 logging:
   level:
-    root: INFO
+    root: DEBUG
 
 spring:
   redis:
