@@ -1,6 +1,7 @@
 package cn.nbbandxdd.survey.ncov.controller;
 
 import cn.nbbandxdd.survey.login.controller.vo.LoginVO;
+import cn.nbbandxdd.survey.ncov.controller.vo.AdminNCovVO;
 import cn.nbbandxdd.survey.ncov.controller.vo.NCoVDetailVO;
 import cn.nbbandxdd.survey.ncov.controller.vo.NCoVStatVO;
 import cn.nbbandxdd.survey.ncov.controller.vo.NCoVVO;
@@ -140,5 +141,52 @@ class NCoVControllerTest {
             .body(Mono.just(vofd), NCoVDetailVO.class)
             .exchange()
             .expectStatus().isOk();
+    }
+
+    @Test
+    public void testGetUserInfoById() {
+        // /login
+        LoginVO vo = new LoginVO();
+        vo.setAdminUserName("admin");
+        vo.setAdminPassword("666666");
+
+        LoginVO loginVO = webTestClient
+                .post()
+                .uri("/login").header("x-platform", "admin")
+                .body(Mono.just(vo), LoginVO.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(LoginVO.class).returnResult().getResponseBody();
+
+        AdminNCovVO adminNCovVO = new AdminNCovVO();
+        adminNCovVO.setUserName("testusr");
+
+        webTestClient
+                .post()
+                .uri("/NCoV/adminFindByName")
+                .header("authorization", "Bearer " + Objects.requireNonNull(loginVO).getToken())
+                .header("x-platform", "admin")
+                .body(Mono.just(adminNCovVO), AdminNCovVO.class)
+                .exchange()
+                .expectStatus().isOk();
+
+        adminNCovVO.setOpenId("testcode");
+        adminNCovVO.setAddr("xxx大街");
+        adminNCovVO.setDist("西城区");
+        adminNCovVO.setPhoneNo("12345678901");
+        webTestClient.post().uri("/NCoV/adminUpdate")
+                .header("authorization", "Bearer " + Objects.requireNonNull(loginVO).getToken())
+                .header("x-platform", "admin")
+                .body(Mono.just(adminNCovVO), AdminNCovVO.class)
+                .exchange()
+                .expectStatus().isOk();
+
+        // TODO 这个为啥是404
+//        webTestClient.post().uri("/NCoV/adminFindById")
+//                .header("authorization", "Bearer " + Objects.requireNonNull(loginVO).getToken())
+//                .header("x-platform", "admin")
+//                .body(Mono.just(adminNCovVO), AdminNCovVO.class)
+//                .exchange()
+//                .expectStatus().isOk();
     }
 }

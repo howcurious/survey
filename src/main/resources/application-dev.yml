@@ -1,6 +1,6 @@
 logging:
   level:
-    root: DEBUG
+    root: ERROR
 
 spring:
   redis:
@@ -9,7 +9,8 @@ spring:
     username:
     password:
   r2dbc:
-    url: r2dbc:mysql://localhost:3306/test_survey?characterEncoding=UTF-8
+#    关闭ssl连接的写法
+    url: r2dbc:mysql://localhost:3306/test_survey?characterEncoding=UTF-8&useSSL=false&sslMode=DISABLED
     username: root
     password: fshuai123
     pool:
@@ -30,3 +31,5 @@ wechat:
 
 jwt:
   key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
+  issuer: abc
+  expiration: 3600

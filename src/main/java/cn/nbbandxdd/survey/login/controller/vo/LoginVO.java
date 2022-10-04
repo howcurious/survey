@@ -24,4 +24,14 @@ public class LoginVO {
      * <p>已注册标识。
      */
     private Boolean isRegistered;
+
+    /**
+     * <p>B端用户名
+     */
+    private String adminUserName;
+
+    /**
+     * <p>B端用户密码
+     */
+    private String adminPassword;
 }

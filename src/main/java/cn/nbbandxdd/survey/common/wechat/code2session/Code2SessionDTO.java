@@ -16,6 +16,11 @@ public class Code2SessionDTO {
     private String openid;
 
     /**
+     * <p>B端用户名
+     */
+    private String adminUserName;
+
+    /**
      * <p>会话密钥。
      */
     private String session_key;
