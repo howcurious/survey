@@ -2,7 +2,6 @@ package cn.nbbandxdd.survey.common.jwt;
 
 import cn.nbbandxdd.survey.common.ICommonConstDefine;
 import cn.nbbandxdd.survey.common.exception.SurveyTokenException;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;

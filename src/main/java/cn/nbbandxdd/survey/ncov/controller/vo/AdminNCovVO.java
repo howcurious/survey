@@ -2,6 +2,9 @@ package cn.nbbandxdd.survey.ncov.controller.vo;
 
 import lombok.Data;
 
+/**
+ * B端请求的VO
+ */
 @Data
 public class AdminNCovVO {
     private String openId;

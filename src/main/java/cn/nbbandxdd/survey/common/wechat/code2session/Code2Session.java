@@ -1,7 +1,5 @@
 package cn.nbbandxdd.survey.common.wechat.code2session;
 
-import cn.nbbandxdd.survey.admin_user.repository.AdminUserRepository;
-import cn.nbbandxdd.survey.admin_user.repository.entity.AdminUserInfoEntity;
 import cn.nbbandxdd.survey.admin_user.service.AdminUserService;
 import cn.nbbandxdd.survey.common.ICommonConstDefine;
 import com.fasterxml.jackson.databind.DeserializationFeature;

@@ -44,6 +44,11 @@ public class NCoVService {
             .then();
     }
 
+    /**
+     * 更新员工信息, B端使用
+     * @param entity
+     * @return
+     */
     public Mono<Void> adminUpdate(Mono<AdminNCoVEntity> entity) {
         return entity.flatMap(one -> {
             one.setLastMantTmstp(LocalDateTime.now());
@@ -82,10 +87,20 @@ public class NCoVService {
             .flatMapMany(one -> entity.flatMapMany(en -> nCoVRepository.findDetail(en.getDprtNam(), en.getGrpNam())));
     }
 
+    /**
+     * 根据姓名获取员工详情, B端使用
+     * @param entity
+     * @return
+     */
     public Flux<AdminNCoVEntity> findDetailByName(Mono<AdminNCoVEntity> entity) {
         return entity.flatMapMany(en -> adminNCoVRepository.findAdminNCoVEntitiesByUserName(en.getUserName()));
     }
 
+    /**
+     * 根据id获取员工详情, B端使用
+     * @param entity
+     * @return
+     */
     public Mono<AdminNCoVEntity> findDetailById(Mono<AdminNCoVEntity> entity) {
         return entity.flatMap(one -> {
             assert one.getId() != null;
