@@ -33,4 +33,27 @@ class LoginControllerTest {
                 .jsonPath("$.token").isNotEmpty()
                 .jsonPath("$.isRegistered").isEqualTo(true);
     }
+
+    @Test
+    public void testAdminLogin() {
+        LoginVO loginVO = new LoginVO();
+        loginVO.setAdminUserName("admin");
+        loginVO.setAdminPassword("666666");
+        // 登陆成功
+        webTestClient.post().uri("/login").header("x-platform", "admin")
+                .body(Mono.just(loginVO), LoginVO.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                    .jsonPath("$.token")
+                    .isNotEmpty();
+
+        loginVO.setAdminPassword("aaaaaa");
+        // 登陆失败
+        webTestClient.post().uri("/login").header("x-platform", "admin")
+                .body(Mono.just(loginVO), LoginVO.class)
+                .exchange()
+                .expectStatus()
+                .isBadRequest();
+    }
 }

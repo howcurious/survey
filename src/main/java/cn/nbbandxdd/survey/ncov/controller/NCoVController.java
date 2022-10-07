@@ -7,10 +7,12 @@ import cn.nbbandxdd.survey.common.wechat.msgseccheck.MsgSecCheck;
 import cn.nbbandxdd.survey.ncov.controller.vo.NCoVDetailVO;
 import cn.nbbandxdd.survey.ncov.controller.vo.NCoVStatVO;
 import cn.nbbandxdd.survey.ncov.controller.vo.NCoVVO;
+import cn.nbbandxdd.survey.ncov.repository.entity.AdminNCoVEntity;
 import cn.nbbandxdd.survey.ncov.repository.entity.NCoVDetailEntity;
 import cn.nbbandxdd.survey.ncov.repository.entity.NCoVEntity;
 import cn.nbbandxdd.survey.ncov.repository.entity.NCoVStatEntity;
 import cn.nbbandxdd.survey.ncov.service.NCoVService;
+import cn.nbbandxdd.survey.ncov.controller.vo.AdminNCovVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
@@ -45,7 +47,10 @@ public class NCoVController {
             .andRoute(POST("/NCoV/findById"), this::findById)
             .andRoute(POST("/NCoV/findDprtStat"), this::findDprtStat)
             .andRoute(POST("/NCoV/findGrpStat"), this::findGrpStat)
-            .andRoute(POST("/NCoV/findDetail"), this::findDetail);
+            .andRoute(POST("/NCoV/findDetail"), this::findDetail)
+            .andRoute(POST("/NCoV/adminUpdate"), this::adminUpdate)
+            .andRoute(POST("/NCoV/adminFindByName"), this::adminFindByName)
+            .andRoute(POST("/NCov/adminFindById"), this::adminFindById);
     }
 
     public Mono<ServerResponse> save(ServerRequest request) {
@@ -102,5 +107,25 @@ public class NCoVController {
             .map(one -> ModelMapper.map(one, NCoVDetailVO.class));
 
         return ServerResponse.ok().body(body, NCoVDetailVO.class);
+    }
+
+    public Mono<ServerResponse> adminUpdate(ServerRequest request) {
+        Mono<AdminNCoVEntity> entity = request.bodyToMono(AdminNCovVO.class).map(one -> ModelMapper.map(one, AdminNCoVEntity.class));
+        Mono<Void> body = nCoVService.adminUpdate(entity);
+        return ServerResponse.ok().body(body, Void.class);
+    }
+
+    public Mono<ServerResponse> adminFindByName(ServerRequest request) {
+        Mono<AdminNCoVEntity> entity = request.bodyToMono(AdminNCovVO.class).
+                map(one -> ModelMapper.map(one, AdminNCoVEntity.class));
+        Flux<AdminNCovVO> body = nCoVService.findDetailByName(entity).map(one -> ModelMapper.map(one, AdminNCovVO.class));
+        return ServerResponse.ok().body(body, AdminNCovVO.class);
+    }
+
+    public Mono<ServerResponse> adminFindById(ServerRequest request) {
+        Mono<AdminNCoVEntity> entity = request.bodyToMono(AdminNCovVO.class).
+                map(one -> ModelMapper.map(one, AdminNCoVEntity.class));
+        Mono<AdminNCovVO> body = nCoVService.findDetailById(entity).map(one -> ModelMapper.map(one, AdminNCovVO.class));
+        return ServerResponse.ok().body(body, AdminNCovVO.class);
     }
 }

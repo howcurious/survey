@@ -171,3 +171,13 @@ CREATE TABLE NCoV (
 
     CONSTRAINT PK_NCoV PRIMARY KEY (OPEN_ID)
 );
+
+create table ADMIN_USR
+(
+    ID       bigint auto_increment comment 'primary key'
+        primary key,
+    USR_NAME varchar(20)  not null comment '用户名',
+    USR_PWD  varchar(100) not null comment '用户密码',
+    constraint key_name,
+    unique (USR_NAME)
+) comment '管理端用户表';

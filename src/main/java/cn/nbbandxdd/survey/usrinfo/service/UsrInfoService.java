@@ -109,7 +109,6 @@ public class UsrInfoService {
      */
     @Transactional
     public Mono<Void> update(Mono<UsrInfoEntity> entity) {
-
         return entity
             .flatMap(one -> {
 
@@ -127,7 +126,6 @@ public class UsrInfoService {
             .flatMap(one -> grpInfoRepository.findByDprtNamAndGrpNam(one.getDprtNam(), one.getGrpNam())
                 .map(en -> one).switchIfEmpty(Mono.error(new SurveyValidationException("部门或分组错误。"))))
             .flatMap(one -> Mono.deferContextual(ctx -> {
-
                 one.setOpenId(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID));
                 return Mono.just(one);
             }))

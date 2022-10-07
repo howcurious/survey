@@ -9,14 +9,21 @@ spring:
     username:
     password:
   r2dbc:
-    url: r2dbcs:h2:mem:///testdb?allowMultiQueries=true&serverTimezone=Asia%2FShanghai&DB_CLOSE_DELAY=-1
-    username:
-    password:
+    #关闭ssl连接的写法
+    url: r2dbc:mysql://localhost:3306/test_survey?characterEncoding=UTF-8&useSSL=false&sslMode=DISABLED
+    username: root
+    password: fshuai123
     pool:
-      max-size: 50
-      validation-query: select 1
-      max-acquire-time: 60s
-      max-idle-time: 10m
+      validation-query: SELECT 1
+      enabled: true
+#    url: r2dbcs:h2:mem:///testdb?allowMultiQueries=true&serverTimezone=Asia%2FShanghai&DB_CLOSE_DELAY=-1
+#    username:
+#    password:
+#    pool:
+#      max-size: 50
+#      validation-query: select 1
+#      max-acquire-time: 60s
+#      max-idle-time: 10m
 
 wechat:
   app-id: 
@@ -24,3 +31,5 @@ wechat:
 
 jwt:
   key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
+  issuer: abc
+  expiration: 3600

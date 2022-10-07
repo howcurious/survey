@@ -9,10 +9,13 @@ import cn.nbbandxdd.survey.usrinfo.service.UsrInfoService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
@@ -42,7 +45,7 @@ public class LoginController {
     /**
      * <p>构造器。
      *
-     * @param code2Session 登录凭证校验
+     * @param code2Session   登录凭证校验
      * @param usrInfoService 用户信息Service
      */
     public LoginController(Code2Session code2Session, UsrInfoService usrInfoService) {
@@ -75,26 +78,36 @@ public class LoginController {
      * </ul>
      */
     private Mono<ServerResponse> login(ServerRequest request) {
-
+        List<String> platformList = request.headers().header("x-platform");
+        boolean isToBPlatform = !CollectionUtils.isEmpty(platformList) && "admin".equals(platformList.get(0));
         Mono<LoginVO> body = request.bodyToMono(LoginVO.class)
-            .flatMap(one -> code2Session.get(one.getCode()))
-            .flatMap(dto -> {
+                .flatMap(one -> {
+                    if (isToBPlatform) {
+                        return code2Session.loginByNameAndPsw(one.getAdminUserName(), one.getAdminPassword());
+                    } else {
+                        return code2Session.get(one.getCode());
+                    }
+                })
+                .flatMap(dto -> {
 
-                if (dto.getErrcode() != null && !StringUtils.equals(dto.getErrcode(), ICommonConstDefine.WECHAT_ERRCODE_SUCCESS)) {
+                    if (!StringUtils.equals(dto.getErrcode(), ICommonConstDefine.WECHAT_ERRCODE_SUCCESS)) {
 
-                    return Mono.error(new SurveyValidationException(String.format("微信登录校验失败，%s：%s。", dto.getErrcode(), dto.getErrmsg())));
-                }
-
-                return usrInfoService.existsByKey(dto.getOpenid())
-                    .map(isRegistered -> {
-
+                        return Mono.error(new SurveyValidationException(String.format("登录校验失败: %s。", dto.getErrmsg())));
+                    }
+                    if (isToBPlatform) {
                         LoginVO loginVO = new LoginVO();
-                        loginVO.setToken(JwtUtils.generateTokenFromOpenid(dto.getOpenid()));
-                        loginVO.setIsRegistered(isRegistered);
+                        loginVO.setToken(JwtUtils.generateTokenFromUserName(dto.getAdminUserName()));
+                        return Mono.just(loginVO);
+                    }
+                    return usrInfoService.existsByKey(dto.getOpenid())
+                            .map(isRegistered -> {
+                                LoginVO loginVO = new LoginVO();
+                                loginVO.setToken(JwtUtils.generateTokenFromOpenid(dto.getOpenid()));
+                                loginVO.setIsRegistered(isRegistered);
+                                return loginVO;
+                            });
 
-                        return loginVO;
-                    });
-            });
+                });
         return ServerResponse.ok().body(body, LoginVO.class);
     }
 }

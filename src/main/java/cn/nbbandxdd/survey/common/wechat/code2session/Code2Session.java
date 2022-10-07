@@ -1,9 +1,12 @@
 package cn.nbbandxdd.survey.common.wechat.code2session;
 
+import cn.nbbandxdd.survey.admin_user.service.AdminUserService;
 import cn.nbbandxdd.survey.common.ICommonConstDefine;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
@@ -44,6 +47,9 @@ public class Code2Session {
     @Value("${spring.profiles.active:dev}")
     private String activeProfile;
 
+    @Autowired
+    private AdminUserService adminUserService;
+
     /**
      * <p>获取登录凭证校验结果。
      *
@@ -73,5 +79,21 @@ public class Code2Session {
             .retrieve()
             .bodyToMono(Code2SessionDTO.class)
             .timeout(Duration.ofSeconds(20));
+    }
+
+    public Mono<Code2SessionDTO> loginByNameAndPsw(String userName, String password) {
+        return adminUserService.getAdminUserByName(userName).
+                flatMap(en -> Mono.just(BCrypt.checkpw(password, en.getUserPwd())))
+                .map(valid -> {
+                    Code2SessionDTO dto = new Code2SessionDTO();
+                    if (valid) {
+                        dto.setAdminUserName(userName);
+                        dto.setErrcode(ICommonConstDefine.WECHAT_ERRCODE_SUCCESS);
+                    } else {
+                        dto.setErrcode(ICommonConstDefine.ADMIN_LOGIN_ERROR);
+                        dto.setErrmsg("用户名或密码错误");
+                    }
+                    return dto;
+                });
     }
 }

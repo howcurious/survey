@@ -1,7 +1,9 @@
 package cn.nbbandxdd.survey.ncov.service;
 
 import cn.nbbandxdd.survey.common.ICommonConstDefine;
+import cn.nbbandxdd.survey.ncov.repository.AdminNCoVRepository;
 import cn.nbbandxdd.survey.ncov.repository.NCoVRepository;
+import cn.nbbandxdd.survey.ncov.repository.entity.AdminNCoVEntity;
 import cn.nbbandxdd.survey.ncov.repository.entity.NCoVDetailEntity;
 import cn.nbbandxdd.survey.ncov.repository.entity.NCoVEntity;
 import cn.nbbandxdd.survey.ncov.repository.entity.NCoVStatEntity;
@@ -16,10 +18,12 @@ import java.time.LocalDateTime;
 public class NCoVService {
 
     private final NCoVRepository nCoVRepository;
+    private final AdminNCoVRepository adminNCoVRepository;
 
-    public NCoVService(NCoVRepository nCoVRepository) {
+    public NCoVService(NCoVRepository nCoVRepository, AdminNCoVRepository adminNCoVRepository) {
 
         this.nCoVRepository = nCoVRepository;
+        this.adminNCoVRepository = adminNCoVRepository;
     }
 
     public Mono<Void> save(Mono<NCoVEntity> entity) {
@@ -38,6 +42,18 @@ public class NCoVService {
             }))
             .flatMap(nCoVRepository::save)
             .then();
+    }
+
+    /**
+     * 更新员工信息, B端使用
+     * @param entity
+     * @return
+     */
+    public Mono<Void> adminUpdate(Mono<AdminNCoVEntity> entity) {
+        return entity.flatMap(one -> {
+            one.setLastMantTmstp(LocalDateTime.now());
+            return Mono.just(one);
+        }).flatMap(adminNCoVRepository::save).then();
     }
 
     public Mono<NCoVEntity> findById() {
@@ -69,5 +85,26 @@ public class NCoVService {
             .deferContextual(ctx -> Mono.just(ctx.get(ICommonConstDefine.CONTEXT_KEY_OPEN_ID).toString()))
             .filterWhen(openId -> nCoVRepository.findCntByOpenIdAndHamCd(openId).map(cnt -> 1 == cnt))
             .flatMapMany(one -> entity.flatMapMany(en -> nCoVRepository.findDetail(en.getDprtNam(), en.getGrpNam())));
+    }
+
+    /**
+     * 根据姓名获取员工详情, B端使用
+     * @param entity
+     * @return
+     */
+    public Flux<AdminNCoVEntity> findDetailByName(Mono<AdminNCoVEntity> entity) {
+        return entity.flatMapMany(en -> adminNCoVRepository.findAdminNCoVEntitiesByUserName(en.getUserName()));
+    }
+
+    /**
+     * 根据id获取员工详情, B端使用
+     * @param entity
+     * @return
+     */
+    public Mono<AdminNCoVEntity> findDetailById(Mono<AdminNCoVEntity> entity) {
+        return entity.flatMap(one -> {
+            assert one.getId() != null;
+            return adminNCoVRepository.findById(one.getId());
+        });
     }
 }

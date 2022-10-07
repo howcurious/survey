@@ -37,6 +37,11 @@ public interface ICommonConstDefine {
     String WECHAT_ERRCODE_SUCCESS = "0";
 
     /**
+     * <p>B端用户登陆失败
+     */
+    String ADMIN_LOGIN_ERROR = "1";
+
+    /**
      * <p>公共标识：是。
      */
     String COMMON_IND_YES = "1";
