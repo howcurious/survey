@@ -279,7 +279,7 @@ public class RespRecService {
                 return Mono.just(one);
             }))
             .flatMapMany(one -> respRecRepository.findRankByExamCdAndLastMantUsr(one.getExamCd(), one.getLastMantUsr(), pageSize, (pageNum - 1) * pageSize))
-            .flatMap(one -> {
+            .flatMapSequential(one -> {
 
                 Mono<UsrInfoEntity> usrInfo = usrInfoRepository.findById(one.getOpenId());
                 return Mono.zip(Mono.just(one), usrInfo, (e, u) -> Tuples.of(e, u.getDprtNam(), u.getGrpNam(), u.getUsrNam()));
