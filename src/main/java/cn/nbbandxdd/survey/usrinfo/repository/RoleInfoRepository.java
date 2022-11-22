@@ -26,5 +26,5 @@ public interface RoleInfoRepository extends ReactiveCrudRepository<RoleInfoEntit
      */
     @Modifying
     @Query("INSERT INTO ROLE_INFO (OPEN_ID, ROLE_ID) VALUES (:openId, :roleId)")
-    Mono<RoleInfoEntity> insert(String openId, String roleId);
+    Mono<Integer> insert(String openId, String roleId);
 }
