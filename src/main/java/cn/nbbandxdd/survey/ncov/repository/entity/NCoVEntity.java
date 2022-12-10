@@ -62,6 +62,9 @@ public class NCoVEntity implements Persistable<String> {
     @Column("Q15")
     private String q15;
 
+    @Column("Q16")
+    private String q16;
+
     @Column("LAST_MANT_TMSTP")
     private LocalDateTime lastMantTmstp;
 

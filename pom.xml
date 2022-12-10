@@ -6,22 +6,26 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.5</version>
+        <version>3.0.0</version>
         <relativePath/>
     </parent>
 
     <profiles>
         <profile>
             <id>dev</id>
+
             <properties>
                 <profileActive>dev</profileActive>
             </properties>
+
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
+
         <profile>
             <id>prod</id>
+
             <properties>
                 <profileActive>prod</profileActive>
             </properties>
@@ -30,14 +34,14 @@
 
     <groupId>cn.nbbandxdd</groupId>
     <artifactId>survey</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <name>survey</name>
     <description>wechat survey</description>
 
     <properties>
         <java.version>17</java.version>
         <modelmapper.version>3.1.0</modelmapper.version>
-        <java-jwt.version>4.0.0</java-jwt.version>
+        <java-jwt.version>4.2.1</java-jwt.version>
         <r2dbc-mysql.version>0.8.2.RELEASE</r2dbc-mysql.version>
     </properties>
 
@@ -76,6 +80,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
 
         <dependency>
