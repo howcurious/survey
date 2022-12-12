@@ -117,7 +117,7 @@ public interface NCoVRepository extends ReactiveCrudRepository<NCoVEntity, Strin
         """)
     Flux<NCoVStatEntity> findGrpStat(String dprtNam);
 
-    @Query("SELECT DPRT_NAM, GRP_NAM, USR_NAM, HAM_CD, (CASE WHEN Q01 LIKE '涉疫%' THEN CONCAT('涉疫（抗原：', Q12, '，核酸：', Q11, '）') ELSE Q01 END) AS Q01 FROM NCoV WHERE DPRT_NAM = :dprtNam AND GRP_NAM = :grpNam ORDER BY HAM_CD")
+    @Query("SELECT DPRT_NAM, GRP_NAM, USR_NAM, HAM_CD, (CASE WHEN Q01 LIKE '涉疫%' THEN CONCAT('涉疫（抗原：', IFNULL(Q12, '暂无'), '，核酸：', IFNULL(Q11, '暂无'), '）') ELSE Q01 END) AS Q01 FROM NCoV WHERE DPRT_NAM = :dprtNam AND GRP_NAM = :grpNam ORDER BY HAM_CD")
     Flux<NCoVDetailEntity> findDetail(String dprtNam, String grpNam);
 
     @Query("SELECT COUNT(1) FROM NCoV WHERE OPEN_ID = :openId AND FLAG = 'I'")
