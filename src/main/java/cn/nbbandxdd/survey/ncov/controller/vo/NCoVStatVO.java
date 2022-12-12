@@ -21,6 +21,10 @@ public class NCoVStatVO {
 
     private Integer grayCntI;
 
+    private Integer aposCntI;
+
+    private Integer nposCntI;
+
     private Integer onCntE;
 
     private Integer offCntE;
@@ -33,6 +37,10 @@ public class NCoVStatVO {
 
     private Integer grayCntE;
 
+    private Integer aposCntE;
+
+    private Integer nposCntE;
+
     private Integer onCntV;
 
     private Integer offCntV;
@@ -44,4 +52,8 @@ public class NCoVStatVO {
     private Integer tempCntV;
 
     private Integer grayCntV;
+
+    private Integer aposCntV;
+
+    private Integer nposCntV;
 }
