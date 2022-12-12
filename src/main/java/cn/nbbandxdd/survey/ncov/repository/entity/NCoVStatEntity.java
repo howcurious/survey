@@ -30,6 +30,12 @@ public class NCoVStatEntity {
     @Column("GRAY_CNT_I")
     private Integer grayCntI;
 
+    @Column("APOS_CNT_I")
+    private Integer aposCntI;
+
+    @Column("NPOS_CNT_I")
+    private Integer nposCntI;
+
     @Column("ON_CNT_E")
     private Integer onCntE;
 
@@ -48,6 +54,12 @@ public class NCoVStatEntity {
     @Column("GRAY_CNT_E")
     private Integer grayCntE;
 
+    @Column("APOS_CNT_E")
+    private Integer aposCntE;
+
+    @Column("NPOS_CNT_E")
+    private Integer nposCntE;
+
     @Column("ON_CNT_V")
     private Integer onCntV;
 
@@ -65,4 +77,10 @@ public class NCoVStatEntity {
 
     @Column("GRAY_CNT_V")
     private Integer grayCntV;
+
+    @Column("APOS_CNT_V")
+    private Integer aposCntV;
+
+    @Column("NPOS_CNT_V")
+    private Integer nposCntV;
 }
