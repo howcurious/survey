@@ -17,7 +17,8 @@ spring:
       max-size: 50
       validation-query: select 1
       max-acquire-time: 60s
-      max-idle-time: 10m
+      max-idle-time: 5m
+      max-life-time: 10m
 
 wechat:
   app-id: 
