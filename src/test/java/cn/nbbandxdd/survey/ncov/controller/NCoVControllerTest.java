@@ -116,17 +116,29 @@ class NCoVControllerTest {
             .expectBody()
                 .jsonPath("$[0].grpNam").isNotEmpty()
                 .jsonPath("$[0].onCntI").isNotEmpty()
+                .jsonPath("$[0].onPosCntI").isNotEmpty()
                 .jsonPath("$[0].offCntI").isNotEmpty()
                 .jsonPath("$[0].leaveCntI").isNotEmpty()
                 .jsonPath("$[0].awayCntI").isNotEmpty()
-                .jsonPath("$[0].tempCntI").isNotEmpty()
                 .jsonPath("$[0].grayCntI").isNotEmpty()
+                .jsonPath("$[0].aposCntI").isNotEmpty()
+                .jsonPath("$[0].nposCntI").isNotEmpty()
                 .jsonPath("$[0].onCntE").isNotEmpty()
+                .jsonPath("$[0].onPosCntE").isNotEmpty()
                 .jsonPath("$[0].offCntE").isNotEmpty()
                 .jsonPath("$[0].leaveCntE").isNotEmpty()
                 .jsonPath("$[0].awayCntE").isNotEmpty()
-                .jsonPath("$[0].tempCntE").isNotEmpty()
-                .jsonPath("$[0].grayCntE").isNotEmpty();
+                .jsonPath("$[0].grayCntE").isNotEmpty()
+                .jsonPath("$[0].aposCntE").isNotEmpty()
+                .jsonPath("$[0].nposCntE").isNotEmpty()
+                .jsonPath("$[0].onCntV").isNotEmpty()
+                .jsonPath("$[0].onPosCntV").isNotEmpty()
+                .jsonPath("$[0].offCntV").isNotEmpty()
+                .jsonPath("$[0].leaveCntV").isNotEmpty()
+                .jsonPath("$[0].awayCntV").isNotEmpty()
+                .jsonPath("$[0].grayCntV").isNotEmpty()
+                .jsonPath("$[0].aposCntV").isNotEmpty()
+                .jsonPath("$[0].nposCntV").isNotEmpty();
 
         // /NCoV/findDetail
         NCoVDetailVO vofd = new NCoVDetailVO();

@@ -11,13 +11,13 @@ public class NCoVStatVO {
 
     private Integer onCntI;
 
+    private Integer onPosCntI;
+
     private Integer offCntI;
 
     private Integer leaveCntI;
 
     private Integer awayCntI;
-
-    private Integer tempCntI;
 
     private Integer grayCntI;
 
@@ -27,13 +27,13 @@ public class NCoVStatVO {
 
     private Integer onCntE;
 
+    private Integer onPosCntE;
+
     private Integer offCntE;
 
     private Integer leaveCntE;
 
     private Integer awayCntE;
-
-    private Integer tempCntE;
 
     private Integer grayCntE;
 
@@ -43,13 +43,13 @@ public class NCoVStatVO {
 
     private Integer onCntV;
 
+    private Integer onPosCntV;
+
     private Integer offCntV;
 
     private Integer leaveCntV;
 
     private Integer awayCntV;
-
-    private Integer tempCntV;
 
     private Integer grayCntV;
 

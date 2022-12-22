@@ -15,6 +15,9 @@ public class NCoVStatEntity {
     @Column("ON_CNT_I")
     private Integer onCntI;
 
+    @Column("ON_POS_CNT_I")
+    private Integer onPosCntI;
+
     @Column("OFF_CNT_I")
     private Integer offCntI;
 
@@ -23,9 +26,6 @@ public class NCoVStatEntity {
 
     @Column("AWAY_CNT_I")
     private Integer awayCntI;
-
-    @Column("TEMP_CNT_I")
-    private Integer tempCntI;
 
     @Column("GRAY_CNT_I")
     private Integer grayCntI;
@@ -39,6 +39,9 @@ public class NCoVStatEntity {
     @Column("ON_CNT_E")
     private Integer onCntE;
 
+    @Column("ON_POS_CNT_E")
+    private Integer onPosCntE;
+
     @Column("OFF_CNT_E")
     private Integer offCntE;
 
@@ -47,9 +50,6 @@ public class NCoVStatEntity {
 
     @Column("AWAY_CNT_E")
     private Integer awayCntE;
-
-    @Column("TEMP_CNT_E")
-    private Integer tempCntE;
 
     @Column("GRAY_CNT_E")
     private Integer grayCntE;
@@ -63,6 +63,9 @@ public class NCoVStatEntity {
     @Column("ON_CNT_V")
     private Integer onCntV;
 
+    @Column("ON_POS_CNT_V")
+    private Integer onPosCntV;
+
     @Column("OFF_CNT_V")
     private Integer offCntV;
 
@@ -71,9 +74,6 @@ public class NCoVStatEntity {
 
     @Column("AWAY_CNT_V")
     private Integer awayCntV;
-
-    @Column("TEMP_CNT_V")
-    private Integer tempCntV;
 
     @Column("GRAY_CNT_V")
     private Integer grayCntV;
