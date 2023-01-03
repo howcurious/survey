@@ -36,6 +36,15 @@ public class NCoVStatEntity {
     @Column("NPOS_CNT_I")
     private Integer nposCntI;
 
+    @Column("POS_CNT_I")
+    private Integer posCntI;
+
+    @Column("SUS_CNT_I")
+    private Integer susCntI;
+
+    @Column("OTH_CNT_I")
+    private Integer othCntI;
+
     @Column("ON_CNT_E")
     private Integer onCntE;
 
@@ -60,6 +69,15 @@ public class NCoVStatEntity {
     @Column("NPOS_CNT_E")
     private Integer nposCntE;
 
+    @Column("POS_CNT_E")
+    private Integer posCntE;
+
+    @Column("SUS_CNT_E")
+    private Integer susCntE;
+
+    @Column("OTH_CNT_E")
+    private Integer othCntE;
+
     @Column("ON_CNT_V")
     private Integer onCntV;
 
@@ -83,4 +101,13 @@ public class NCoVStatEntity {
 
     @Column("NPOS_CNT_V")
     private Integer nposCntV;
+
+    @Column("POS_CNT_V")
+    private Integer posCntV;
+
+    @Column("SUS_CNT_V")
+    private Integer susCntV;
+
+    @Column("OTH_CNT_V")
+    private Integer othCntV;
 }
