@@ -121,21 +121,18 @@ class NCoVControllerTest {
                 .jsonPath("$[0].leaveCntI").isNotEmpty()
                 .jsonPath("$[0].posCntI").isNotEmpty()
                 .jsonPath("$[0].susCntI").isNotEmpty()
-                .jsonPath("$[0].othCntI").isNotEmpty()
                 .jsonPath("$[0].onCntE").isNotEmpty()
                 .jsonPath("$[0].onPosCntE").isNotEmpty()
                 .jsonPath("$[0].offCntE").isNotEmpty()
                 .jsonPath("$[0].leaveCntE").isNotEmpty()
                 .jsonPath("$[0].posCntE").isNotEmpty()
                 .jsonPath("$[0].susCntE").isNotEmpty()
-                .jsonPath("$[0].othCntE").isNotEmpty()
                 .jsonPath("$[0].onCntV").isNotEmpty()
                 .jsonPath("$[0].onPosCntV").isNotEmpty()
                 .jsonPath("$[0].offCntV").isNotEmpty()
                 .jsonPath("$[0].leaveCntV").isNotEmpty()
                 .jsonPath("$[0].posCntV").isNotEmpty()
-                .jsonPath("$[0].susCntV").isNotEmpty()
-                .jsonPath("$[0].othCntV").isNotEmpty();
+                .jsonPath("$[0].susCntV").isNotEmpty();
 
         // /NCoV/findDetail
         NCoVDetailVO vofd = new NCoVDetailVO();

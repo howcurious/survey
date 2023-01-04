@@ -17,19 +17,9 @@ public class NCoVStatVO {
 
     private Integer leaveCntI;
 
-    private Integer awayCntI;
-
-    private Integer grayCntI;
-
-    private Integer aposCntI;
-
-    private Integer nposCntI;
-
     private Integer posCntI;
 
     private Integer susCntI;
-
-    private Integer othCntI;
 
     private Integer onCntE;
 
@@ -39,19 +29,9 @@ public class NCoVStatVO {
 
     private Integer leaveCntE;
 
-    private Integer awayCntE;
-
-    private Integer grayCntE;
-
-    private Integer aposCntE;
-
-    private Integer nposCntE;
-
     private Integer posCntE;
 
     private Integer susCntE;
-
-    private Integer othCntE;
 
     private Integer onCntV;
 
@@ -61,17 +41,7 @@ public class NCoVStatVO {
 
     private Integer leaveCntV;
 
-    private Integer awayCntV;
-
-    private Integer grayCntV;
-
-    private Integer aposCntV;
-
-    private Integer nposCntV;
-
     private Integer posCntV;
 
     private Integer susCntV;
-
-    private Integer othCntV;
 }

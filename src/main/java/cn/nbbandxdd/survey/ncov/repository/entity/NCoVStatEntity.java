@@ -24,26 +24,11 @@ public class NCoVStatEntity {
     @Column("LEAVE_CNT_I")
     private Integer leaveCntI;
 
-    @Column("AWAY_CNT_I")
-    private Integer awayCntI;
-
-    @Column("GRAY_CNT_I")
-    private Integer grayCntI;
-
-    @Column("APOS_CNT_I")
-    private Integer aposCntI;
-
-    @Column("NPOS_CNT_I")
-    private Integer nposCntI;
-
     @Column("POS_CNT_I")
     private Integer posCntI;
 
     @Column("SUS_CNT_I")
     private Integer susCntI;
-
-    @Column("OTH_CNT_I")
-    private Integer othCntI;
 
     @Column("ON_CNT_E")
     private Integer onCntE;
@@ -57,26 +42,11 @@ public class NCoVStatEntity {
     @Column("LEAVE_CNT_E")
     private Integer leaveCntE;
 
-    @Column("AWAY_CNT_E")
-    private Integer awayCntE;
-
-    @Column("GRAY_CNT_E")
-    private Integer grayCntE;
-
-    @Column("APOS_CNT_E")
-    private Integer aposCntE;
-
-    @Column("NPOS_CNT_E")
-    private Integer nposCntE;
-
     @Column("POS_CNT_E")
     private Integer posCntE;
 
     @Column("SUS_CNT_E")
     private Integer susCntE;
-
-    @Column("OTH_CNT_E")
-    private Integer othCntE;
 
     @Column("ON_CNT_V")
     private Integer onCntV;
@@ -90,24 +60,9 @@ public class NCoVStatEntity {
     @Column("LEAVE_CNT_V")
     private Integer leaveCntV;
 
-    @Column("AWAY_CNT_V")
-    private Integer awayCntV;
-
-    @Column("GRAY_CNT_V")
-    private Integer grayCntV;
-
-    @Column("APOS_CNT_V")
-    private Integer aposCntV;
-
-    @Column("NPOS_CNT_V")
-    private Integer nposCntV;
-
     @Column("POS_CNT_V")
     private Integer posCntV;
 
     @Column("SUS_CNT_V")
     private Integer susCntV;
-
-    @Column("OTH_CNT_V")
-    private Integer othCntV;
 }
